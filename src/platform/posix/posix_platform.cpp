@@ -16,19 +16,22 @@ namespace rtsdk {
 TimeUs PosixClock::now_us() const {
   timespec ts;
   clock_gettime(CLOCK_MONOTONIC, &ts);
-  return static_cast<TimeUs>(ts.tv_sec) * 1000000u + static_cast<TimeUs>(ts.tv_nsec) / 1000u;
+  return static_cast<TimeUs>(ts.tv_sec) * 1000000u +
+         static_cast<TimeUs>(ts.tv_nsec) / 1000u;
 }
 
 void PosixClock::sleep_until(TimeUs t) {
   timespec ts;
   ts.tv_sec = static_cast<time_t>(t / 1000000u);
   ts.tv_nsec = static_cast<long>((t % 1000000u) * 1000u);
-  while (clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &ts, nullptr) == EINTR) {
+  while (clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &ts, nullptr) ==
+         EINTR) {
   }
 }
 
 int PosixPlatform::map_priority(Priority p) {
-  const int lo = sched_get_priority_min(SCHED_FIFO), hi = sched_get_priority_max(SCHED_FIFO);
+  const int lo = sched_get_priority_min(SCHED_FIFO),
+            hi = sched_get_priority_max(SCHED_FIFO);
   return lo + static_cast<int>((static_cast<long>(hi - lo) * p) / 255);
 }
 
@@ -41,7 +44,8 @@ struct Payload {
 
 void* trampoline(void* arg) {
   std::unique_ptr<Payload> p(static_cast<Payload*>(arg));
-  if (!p->name.empty()) pthread_setname_np(pthread_self(), p->name.substr(0, 15).c_str());
+  if (!p->name.empty())
+    pthread_setname_np(pthread_self(), p->name.substr(0, 15).c_str());
   p->body();
   return nullptr;
 }
@@ -64,7 +68,8 @@ class PThread final : public IThread {
 
 }  // namespace
 
-std::unique_ptr<IThread> PosixPlatform::spawn(const ThreadAttr& attr, std::function<void()> body) {
+std::unique_ptr<IThread> PosixPlatform::spawn(const ThreadAttr& attr,
+                                              std::function<void()> body) {
   auto launch = [&](bool realtime) -> std::unique_ptr<IThread> {
     pthread_attr_t pa;
     pthread_attr_init(&pa);
@@ -96,13 +101,15 @@ std::unique_ptr<IThread> PosixPlatform::spawn(const ThreadAttr& attr, std::funct
 
 // ------------------------------------------------------------------- PosixShm
 
-std::unique_ptr<PosixShm> PosixShm::open(const std::string& name, std::size_t bytes, bool create,
+std::unique_ptr<PosixShm> PosixShm::open(const std::string& name,
+                                         std::size_t bytes, bool create,
                                          std::string* error) {
   auto fail = [&](const char* what) -> std::unique_ptr<PosixShm> {
     if (error) *error = std::string(what) + ": " + std::strerror(errno);
     return nullptr;
   };
-  const int fd = shm_open(name.c_str(), create ? (O_CREAT | O_RDWR | O_TRUNC) : O_RDWR, 0600);
+  const int fd = shm_open(name.c_str(),
+                          create ? (O_CREAT | O_RDWR | O_TRUNC) : O_RDWR, 0600);
   if (fd < 0) return fail("shm_open");
   if (create && ftruncate(fd, static_cast<off_t>(bytes)) != 0) {
     close(fd);

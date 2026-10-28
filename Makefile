@@ -46,7 +46,7 @@ freertos-syntax:
 	$(CXX) -std=c++17 -Wall -Wextra -Wpedantic -Werror -Iinclude -Itests/stubs -fsyntax-only src/platform/freertos/freertos_platform.cpp
 
 # Everything a CI gate should run: tests, sanitizers, perf budget, FreeRTOS compile check.
-quality: test sanitize bench-check freertos-syntax
+quality: format-check test sanitize bench-check freertos-syntax
 
 # Fails when a performance budget in bench/bench.cpp is exceeded.
 bench-check: $(OUT)/rtsdk_bench
@@ -55,4 +55,13 @@ bench-check: $(OUT)/rtsdk_bench
 clean:
 	rm -rf build build-asan build-tsan
 
-.PHONY: all test bench sanitize clean freertos-syntax quality bench-check
+# Google style via .clang-format. `make format` rewrites, `make format-check` only verifies.
+FORMAT_FILES := $(shell git ls-files '*.cpp' '*.hpp' '*.h' '*.proto' 2>/dev/null)
+
+format:
+	clang-format -i $(FORMAT_FILES)
+
+format-check:
+	clang-format --dry-run -Werror $(FORMAT_FILES)
+
+.PHONY: format format-check all test bench sanitize clean freertos-syntax quality bench-check

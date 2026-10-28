@@ -15,7 +15,8 @@ using namespace rtsdk;
 class LambdaNode final : public Node {
  public:
   using Step = std::function<bool(const StepContext&)>;
-  explicit LambdaNode(Step s, bool init_ok = true) : step_(std::move(s)), init_ok_(init_ok) {}
+  explicit LambdaNode(Step s, bool init_ok = true)
+      : step_(std::move(s)), init_ok_(init_ok) {}
   bool on_init() override {
     ++inits;
     return init_ok_;
@@ -29,7 +30,8 @@ class LambdaNode final : public Node {
   bool init_ok_;
 };
 
-// Advances simulated time tick by tick, calling TickScheduler::tick() each time.
+// Advances simulated time tick by tick, calling TickScheduler::tick() each
+// time.
 inline void drive(SimPlatform& p, TickScheduler& ts, TimeUs until_us) {
   ManualClock& c = p.manual_clock();
   while (c.now_us() < until_us) {

@@ -30,21 +30,22 @@ struct Registrar {
   static rttest::Registrar reg_##name(#name, &test_##name); \
   static void test_##name()
 
-#define CHECK(cond)                                                          \
-  do {                                                                       \
-    if (!(cond)) {                                                           \
-      std::printf("    FAIL %s:%d: %s\n", __FILE__, __LINE__, #cond);        \
-      ++rttest::failures();                                                  \
-    }                                                                        \
+#define CHECK(cond)                                                   \
+  do {                                                                \
+    if (!(cond)) {                                                    \
+      std::printf("    FAIL %s:%d: %s\n", __FILE__, __LINE__, #cond); \
+      ++rttest::failures();                                           \
+    }                                                                 \
   } while (0)
 
-#define CHECK_EQ(a, b)                                                                         \
-  do {                                                                                         \
-    const auto va_ = (a);                                                                      \
-    const auto vb_ = (b);                                                                      \
-    if (!(va_ == vb_)) {                                                                       \
-      std::printf("    FAIL %s:%d: %s == %s (%llu vs %llu)\n", __FILE__, __LINE__, #a, #b,     \
-                  static_cast<unsigned long long>(va_), static_cast<unsigned long long>(vb_)); \
-      ++rttest::failures();                                                                    \
-    }                                                                                          \
+#define CHECK_EQ(a, b)                                                    \
+  do {                                                                    \
+    const auto va_ = (a);                                                 \
+    const auto vb_ = (b);                                                 \
+    if (!(va_ == vb_)) {                                                  \
+      std::printf("    FAIL %s:%d: %s == %s (%llu vs %llu)\n", __FILE__,  \
+                  __LINE__, #a, #b, static_cast<unsigned long long>(va_), \
+                  static_cast<unsigned long long>(vb_));                  \
+      ++rttest::failures();                                               \
+    }                                                                     \
   } while (0)

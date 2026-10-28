@@ -7,34 +7,47 @@ namespace rtsdk {
 // Human-readable manager state, used in logs and the gRPC status reply.
 const char* to_string(ManagerState s) {
   switch (s) {
-    case ManagerState::Idle: return "idle";
-    case ManagerState::Running: return "running";
-    case ManagerState::SafeState: return "safe-state";
-    case ManagerState::Stopped: return "stopped";
+    case ManagerState::Idle:
+      return "idle";
+    case ManagerState::Running:
+      return "running";
+    case ManagerState::SafeState:
+      return "safe-state";
+    case ManagerState::Stopped:
+      return "stopped";
   }
   return "?";
 }
 
 namespace {
-// Event log is a bounded ring: oldest entries are dropped so memory stays fixed.
+// Event log is a bounded ring: oldest entries are dropped so memory stays
+// fixed.
 constexpr std::size_t kMaxEvents = 1024;
-}
+}  // namespace
 
-ExecutionManager::ExecutionManager(IPlatform& platform, Mode mode, IHwWatchdog* hw, TimeUs tick_us)
-    : platform_(platform), mode_(mode), tick_us_(tick_us), wd_(platform.clock(), hb_, hw) {
-  // All watchdog faults (heartbeat, deadline, step failure) funnel into one policy handler.
+ExecutionManager::ExecutionManager(IPlatform& platform, Mode mode,
+                                   IHwWatchdog* hw, TimeUs tick_us)
+    : platform_(platform),
+      mode_(mode),
+      tick_us_(tick_us),
+      wd_(platform.clock(), hb_, hw) {
+  // All watchdog faults (heartbeat, deadline, step failure) funnel into one
+  // policy handler.
   wd_.set_handler([this](const Fault& f) { on_fault(f); });
 }
 
 ExecutionManager::~ExecutionManager() { stop(); }
 
-void ExecutionManager::register_factory(const std::string& type, NodeFactory f) {
+void ExecutionManager::register_factory(const std::string& type,
+                                        NodeFactory f) {
   factories_[type] = std::move(f);
 }
 
-void ExecutionManager::log(const char* kind, const std::string& node, const std::string& detail) {
+void ExecutionManager::log(const char* kind, const std::string& node,
+                           const std::string& detail) {
   // caller holds mu_ or is single-threaded setup
-  events_.push_back(Event{next_seq_++, platform_.clock().now_us(), kind, node, detail});
+  events_.push_back(
+      Event{next_seq_++, platform_.clock().now_us(), kind, node, detail});
   if (events_.size() > kMaxEvents) events_.pop_front();
 }
 
@@ -63,14 +76,16 @@ bool ExecutionManager::configure(const LaunchConfig& cfg, std::string& error) {
   for (const auto& spec : cfg_.nodes) {
     NodeConfig nc = spec.config;
     // Default liveness budget: three missed periods.
-    if (nc.heartbeat_timeout_us == 0) nc.heartbeat_timeout_us = 3 * nc.period_us;
+    if (nc.heartbeat_timeout_us == 0)
+      nc.heartbeat_timeout_us = 3 * nc.period_us;
     hb_.add(nc.heartbeat_timeout_us);
     auto node = factories_[spec.type](nc);
     if (!node) {
       error = "factory for '" + spec.type + "' returned null";
       return false;
     }
-    runners_.push_back(std::make_unique<NodeRunner>(runners_.size(), nc, std::move(node)));
+    runners_.push_back(
+        std::make_unique<NodeRunner>(runners_.size(), nc, std::move(node)));
   }
   return true;
 }
@@ -103,7 +118,8 @@ bool ExecutionManager::start(std::string& error, bool run_executor) {
   for (std::size_t idx : order) {
     const LaunchStep& step = cfg_.steps[idx];
     NodeRunner* r = find(step.node);
-    // A node is released no earlier than all its predecessors plus its own delay.
+    // A node is released no earlier than all its predecessors plus its own
+    // delay.
     TimeUs ready = t0;
     bool deps_ok = true;
     for (const auto& d : step.after) {
@@ -126,7 +142,8 @@ bool ExecutionManager::start(std::string& error, bool run_executor) {
     hb_.enable(r->id(), first);
     r->start();
     exec_->add(*r, first);
-    log("launch", step.node, "started, first release +" + std::to_string(first - t0) + "us");
+    log("launch", step.node,
+        "started, first release +" + std::to_string(first - t0) + "us");
   }
   {
     std::lock_guard<std::mutex> lk(mu_);
@@ -215,8 +232,9 @@ std::vector<Event> ExecutionManager::events_since(std::uint64_t seq) const {
   return out;
 }
 
-// Fault policy dispatcher, called from the watchdog (supervisor or tick thread).
-// mu_ is released before entering safe state because that path takes it again.
+// Fault policy dispatcher, called from the watchdog (supervisor or tick
+// thread). mu_ is released before entering safe state because that path takes
+// it again.
 void ExecutionManager::on_fault(const Fault& f) {
   std::unique_lock<std::mutex> lk(mu_);
   if (state_ != ManagerState::Running) return;

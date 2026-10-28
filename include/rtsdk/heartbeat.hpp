@@ -14,7 +14,8 @@ class HeartbeatMonitor {
   // Registration must complete before concurrent beat()/expired() calls.
   std::size_t add(TimeUs timeout_us);
 
-  void enable(std::size_t id, TimeUs now);  // starts supervision with a fresh beat
+  void enable(std::size_t id,
+              TimeUs now);  // starts supervision with a fresh beat
   void disable(std::size_t id);
   void beat(std::size_t id, TimeUs now);
 

@@ -16,8 +16,10 @@ TimeUs FreeRtosClock::now_us() const {
   const std::uint64_t t32 = static_cast<std::uint64_t>(xTaskGetTickCount());
   std::uint64_t prev = ticks_ext_.load(std::memory_order_relaxed);
   std::uint64_t cand = (prev & ~0xFFFFFFFFull) | t32;
-  if (cand + 0x80000000ull < prev) cand += 0x100000000ull;  // wrapped (needs a call per half-wrap)
-  while (cand > prev && !ticks_ext_.compare_exchange_weak(prev, cand, std::memory_order_relaxed)) {
+  if (cand + 0x80000000ull < prev)
+    cand += 0x100000000ull;  // wrapped (needs a call per half-wrap)
+  while (cand > prev && !ticks_ext_.compare_exchange_weak(
+                            prev, cand, std::memory_order_relaxed)) {
   }
   return cand * kTickUs;
 }
@@ -26,7 +28,8 @@ void FreeRtosClock::sleep_until(TimeUs deadline_us) {
   const TimeUs now = now_us();
   if (deadline_us <= now) return;
   const TimeUs delta = deadline_us - now;
-  vTaskDelay(static_cast<TickType_t>((delta + kTickUs - 1) / kTickUs));  // round up: never wake early
+  vTaskDelay(static_cast<TickType_t>((delta + kTickUs - 1) /
+                                     kTickUs));  // round up: never wake early
 }
 
 unsigned FreeRtosPlatform::map_priority(Priority p) {
@@ -66,11 +69,15 @@ class RtosThread final : public IThread {
 
 }  // namespace
 
-std::unique_ptr<IThread> FreeRtosPlatform::spawn(const ThreadAttr& attr, std::function<void()> body) {
+std::unique_ptr<IThread> FreeRtosPlatform::spawn(const ThreadAttr& attr,
+                                                 std::function<void()> body) {
   auto* ctx = new TaskCtx{std::move(body), xSemaphoreCreateBinary()};
   const configSTACK_DEPTH_TYPE depth =
-      attr.stack_bytes ? static_cast<configSTACK_DEPTH_TYPE>(attr.stack_bytes / sizeof(StackType_t)) : 1024;
-  if (xTaskCreate(task_entry, attr.name, depth, ctx, map_priority(attr.priority), nullptr) != pdPASS) {
+      attr.stack_bytes ? static_cast<configSTACK_DEPTH_TYPE>(
+                             attr.stack_bytes / sizeof(StackType_t))
+                       : 1024;
+  if (xTaskCreate(task_entry, attr.name, depth, ctx,
+                  map_priority(attr.priority), nullptr) != pdPASS) {
     vSemaphoreDelete(ctx->done);
     delete ctx;
     return nullptr;

@@ -1,5 +1,6 @@
 // Operating-system abstraction layer. The core library depends only on this
-// header; each target (POSIX/Yocto, FreeRTOS, simulation) supplies an IPlatform.
+// header; each target (POSIX/Yocto, FreeRTOS, simulation) supplies an
+// IPlatform.
 #pragma once
 
 #include <atomic>
@@ -43,7 +44,8 @@ class IPlatform {
  public:
   virtual ~IPlatform() = default;
   virtual IClock& clock() = 0;
-  virtual std::unique_ptr<IThread> spawn(const ThreadAttr& attr, std::function<void()> body) = 0;
+  virtual std::unique_ptr<IThread> spawn(const ThreadAttr& attr,
+                                         std::function<void()> body) = 0;
   // True if the backend honoured the requested real-time priorities (on POSIX
   // this needs CAP_SYS_NICE/root; otherwise threads fall back to SCHED_OTHER).
   virtual bool realtime_priorities_active() const = 0;
@@ -52,7 +54,9 @@ class IPlatform {
 // Deterministic clock for tests and simulation: sleeping advances time.
 class ManualClock final : public IClock {
  public:
-  TimeUs now_us() const override { return now_.load(std::memory_order_acquire); }
+  TimeUs now_us() const override {
+    return now_.load(std::memory_order_acquire);
+  }
   void sleep_until(TimeUs t) override {
     TimeUs cur = now_.load();
     while (t > cur && !now_.compare_exchange_weak(cur, t)) {

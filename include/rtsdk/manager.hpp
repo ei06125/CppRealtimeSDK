@@ -42,11 +42,14 @@ class ExecutionManager {
  public:
   enum class Mode { Tick, Threads };
 
-  ExecutionManager(IPlatform& platform, Mode mode, IHwWatchdog* hw = nullptr, TimeUs tick_us = kMs);
+  ExecutionManager(IPlatform& platform, Mode mode, IHwWatchdog* hw = nullptr,
+                   TimeUs tick_us = kMs);
   ~ExecutionManager();
 
   void register_factory(const std::string& type, NodeFactory f);
-  void set_safe_state_hook(std::function<void()> hook) { safe_hook_ = std::move(hook); }
+  void set_safe_state_hook(std::function<void()> hook) {
+    safe_hook_ = std::move(hook);
+  }
 
   // Builds the nodes described by `cfg` (does not run anything).
   bool configure(const LaunchConfig& cfg, std::string& error);
@@ -60,14 +63,16 @@ class ExecutionManager {
   bool node(const std::string& name, NodeStatus& out) const;
   bool restart_node(const std::string& name);
   bool stop_node(const std::string& name);
-  std::vector<Event> events_since(std::uint64_t seq) const;  // events with seq > given
+  std::vector<Event> events_since(
+      std::uint64_t seq) const;  // events with seq > given
   TickScheduler* tick_scheduler() { return tick_.get(); }
   Watchdog& watchdog() { return wd_; }
 
  private:
   void on_fault(const Fault& f);
   void enter_safe_state(const std::string& reason);
-  void log(const char* kind, const std::string& node, const std::string& detail);
+  void log(const char* kind, const std::string& node,
+           const std::string& detail);
   NodeRunner* find(const std::string& name) const;
 
   IPlatform& platform_;

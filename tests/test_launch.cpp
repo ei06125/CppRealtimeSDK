@@ -39,7 +39,8 @@ TEST(launch_resolves_dependency_order) {
   CHECK(LaunchConfig::parse(kGood, c, err));
   std::vector<std::size_t> order;
   CHECK(c.resolve_order(order, err));
-  // steps: 0=planner(after fusion) 1=camera 2=fusion(after camera) -> camera, fusion, planner
+  // steps: 0=planner(after fusion) 1=camera 2=fusion(after camera) -> camera,
+  // fusion, planner
   CHECK(order.size() == 3 && order[0] == 1 && order[1] == 2 && order[2] == 0);
 }
 
@@ -47,8 +48,10 @@ TEST(launch_resolves_dependency_order) {
 TEST(launch_detects_cycle) {
   LaunchConfig c;
   std::string err;
-  CHECK(LaunchConfig::parse("node a type=t period_ms=1\nnode b type=t period_ms=1\n"
-                            "start a after=b\nstart b after=a\n", c, err));
+  CHECK(LaunchConfig::parse(
+      "node a type=t period_ms=1\nnode b type=t period_ms=1\n"
+      "start a after=b\nstart b after=a\n",
+      c, err));
   std::vector<std::size_t> order;
   CHECK(!c.resolve_order(order, err));
   CHECK(err.find("cycle") != std::string::npos);
@@ -58,15 +61,21 @@ TEST(launch_detects_cycle) {
 TEST(launch_rejects_bad_input) {
   LaunchConfig c;
   std::string err;
-  CHECK(!LaunchConfig::parse("node a priority=1 period_ms=1\n", c, err));            // no type
-  CHECK(!LaunchConfig::parse("node a type=t priority=300 period_ms=1\n", c, err));   // prio range
-  CHECK(!LaunchConfig::parse("node a type=t period_ms=0\n", c, err));                // zero period
-  CHECK(!LaunchConfig::parse("node a type=t period_ms=x\n", c, err));                // not a number
-  CHECK(!LaunchConfig::parse("node a type=t bogus=1\n", c, err));                    // unknown key
-  CHECK(!LaunchConfig::parse("frob a\n", c, err));                                   // unknown directive
-  CHECK(!LaunchConfig::parse("node a type=t\nnode a type=t\n", c, err));             // duplicate
+  CHECK(!LaunchConfig::parse("node a priority=1 period_ms=1\n", c,
+                             err));  // no type
+  CHECK(!LaunchConfig::parse("node a type=t priority=300 period_ms=1\n", c,
+                             err));  // prio range
+  CHECK(!LaunchConfig::parse("node a type=t period_ms=0\n", c,
+                             err));  // zero period
+  CHECK(!LaunchConfig::parse("node a type=t period_ms=x\n", c,
+                             err));  // not a number
+  CHECK(
+      !LaunchConfig::parse("node a type=t bogus=1\n", c, err));  // unknown key
+  CHECK(!LaunchConfig::parse("frob a\n", c, err));  // unknown directive
+  CHECK(!LaunchConfig::parse("node a type=t\nnode a type=t\n", c,
+                             err));  // duplicate
   CHECK(err.find("line 2") != std::string::npos);
   CHECK(LaunchConfig::parse("node a type=t\nstart b\n", c, err));
   std::vector<std::size_t> order;
-  CHECK(!c.resolve_order(order, err));                                               // unknown node
+  CHECK(!c.resolve_order(order, err));  // unknown node
 }

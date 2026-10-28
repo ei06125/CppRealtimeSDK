@@ -25,10 +25,17 @@ struct NodeConfig {
   TimeUs heartbeat_timeout_us = 0;  // 0 = 3 * period
   FaultAction on_fault = FaultAction::RestartNode;
   std::uint32_t max_restarts = 3;
-  std::uint32_t fault_threshold = 3;  // consecutive misses/failures before the watchdog is told
+  std::uint32_t fault_threshold =
+      3;  // consecutive misses/failures before the watchdog is told
 };
 
-enum class NodeState : std::uint8_t { Created, Initialized, Running, Faulted, Stopped };
+enum class NodeState : std::uint8_t {
+  Created,
+  Initialized,
+  Running,
+  Faulted,
+  Stopped
+};
 
 const char* to_string(NodeState s);
 const char* to_string(FaultAction a);
@@ -51,7 +58,8 @@ class Node {
 struct NodeStats {
   std::uint64_t cycles = 0;
   std::uint64_t deadline_misses = 0;
-  std::uint64_t skipped_releases = 0;  // releases lost because the previous job was still pending
+  std::uint64_t skipped_releases =
+      0;  // releases lost because the previous job was still pending
   std::uint64_t step_failures = 0;
   TimeUs max_exec_us = 0;
   TimeUs max_latency_us = 0;  // release -> start

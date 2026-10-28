@@ -18,7 +18,8 @@ namespace rtsdk {
 class IExecutor {
  public:
   virtual ~IExecutor() = default;
-  // Must be called before start(). first_release_us is the first nominal release.
+  // Must be called before start(). first_release_us is the first nominal
+  // release.
   virtual void add(NodeRunner& r, TimeUs first_release_us) = 0;
   virtual void start() = 0;
   virtual void stop() = 0;
@@ -30,14 +31,18 @@ class TickScheduler final : public IExecutor {
   ~TickScheduler() override { stop(); }
 
   void add(NodeRunner& r, TimeUs first_release_us) override;
-  void start() override;  // runs tick() from a background thread at tick_us cadence
+  void start()
+      override;  // runs tick() from a background thread at tick_us cadence
   void stop() override;
 
   // Release due jobs and dispatch by priority until the tick budget is used up
-  // or nothing is ready. Then runs the watchdog. Call directly for manual driving.
+  // or nothing is ready. Then runs the watchdog. Call directly for manual
+  // driving.
   void tick();
 
-  std::uint64_t tick_count() const { return ticks_.load(std::memory_order_relaxed); }
+  std::uint64_t tick_count() const {
+    return ticks_.load(std::memory_order_relaxed);
+  }
   TimeUs tick_us() const { return tick_us_; }
 
  private:
@@ -62,7 +67,8 @@ class TickScheduler final : public IExecutor {
 
 class ThreadExecutor final : public IExecutor {
  public:
-  ThreadExecutor(IPlatform& platform, Watchdog& wd, TimeUs supervisor_period_us = 5 * kMs,
+  ThreadExecutor(IPlatform& platform, Watchdog& wd,
+                 TimeUs supervisor_period_us = 5 * kMs,
                  Priority supervisor_priority = 255);
   ~ThreadExecutor() override { stop(); }
 

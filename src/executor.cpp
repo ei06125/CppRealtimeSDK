@@ -4,7 +4,8 @@
 
 namespace rtsdk {
 
-// ---------------------------------------------------------------- TickScheduler
+// ----------------------------------------------------------------
+// TickScheduler
 
 TickScheduler::TickScheduler(IPlatform& platform, Watchdog& wd, TimeUs tick_us)
     : platform_(platform), wd_(wd), tick_us_(tick_us) {}
@@ -20,7 +21,8 @@ void TickScheduler::release_due(TimeUs now) {
   for (auto& s : slots_) {
     if (now < s.next_release) continue;
     if (s.runner->state() != NodeState::Running) {
-      s.next_release = now + s.runner->config().period_us;  // no burst after (re)start
+      s.next_release =
+          now + s.runner->config().period_us;  // no burst after (re)start
       continue;
     }
     if (s.pending) {
@@ -31,7 +33,9 @@ void TickScheduler::release_due(TimeUs now) {
     }
     const TimeUs period = s.runner->config().period_us;
     s.next_release += period;
-    while (now >= s.next_release) {  // starved for whole periods: those releases are lost
+    while (
+        now >=
+        s.next_release) {  // starved for whole periods: those releases are lost
       s.runner->note_skipped_release();
       s.next_release += period;
     }
@@ -47,8 +51,10 @@ TickScheduler::Slot* TickScheduler::pick() {
       best = &s;
       continue;
     }
-    const auto pa = s.runner->config().priority, pb = best->runner->config().priority;
-    if (pa > pb || (pa == pb && s.pending_release < best->pending_release)) best = &s;
+    const auto pa = s.runner->config().priority,
+               pb = best->runner->config().priority;
+    if (pa > pb || (pa == pb && s.pending_release < best->pending_release))
+      best = &s;
   }
   return best;
 }
@@ -73,7 +79,8 @@ void TickScheduler::tick() {
   ticks_.fetch_add(1, std::memory_order_relaxed);
 }
 
-// Optional driver thread; tests instead call tick() directly with a ManualClock.
+// Optional driver thread; tests instead call tick() directly with a
+// ManualClock.
 void TickScheduler::start() {
   stop_.store(false);
   ThreadAttr attr;
@@ -98,9 +105,11 @@ void TickScheduler::stop() {
   }
 }
 
-// --------------------------------------------------------------- ThreadExecutor
+// ---------------------------------------------------------------
+// ThreadExecutor
 
-ThreadExecutor::ThreadExecutor(IPlatform& platform, Watchdog& wd, TimeUs supervisor_period_us,
+ThreadExecutor::ThreadExecutor(IPlatform& platform, Watchdog& wd,
+                               TimeUs supervisor_period_us,
                                Priority supervisor_priority)
     : platform_(platform),
       wd_(wd),
@@ -115,7 +124,8 @@ void ThreadExecutor::add(NodeRunner& r, TimeUs first_release_us) {
 void ThreadExecutor::node_loop(NodeRunner& r, TimeUs next) {
   IClock& clk = platform_.clock();
   const TimeUs period = r.config().period_us;
-  constexpr TimeUs kStopPoll = 10 * kMs;  // bounds shutdown latency for slow nodes
+  constexpr TimeUs kStopPoll =
+      10 * kMs;  // bounds shutdown latency for slow nodes
   std::uint64_t cycle = 0;
   while (!stop_.load(std::memory_order_acquire)) {
     TimeUs now = clk.now_us();
@@ -123,7 +133,8 @@ void ThreadExecutor::node_loop(NodeRunner& r, TimeUs next) {
       clk.sleep_until(std::min(next, now + kStopPoll));
       continue;
     }
-    if (r.state() != NodeState::Running) {  // restarting/stopped: idle without bursting later
+    if (r.state() != NodeState::Running) {  // restarting/stopped: idle without
+                                            // bursting later
       next = now + period;
       continue;
     }
@@ -157,7 +168,8 @@ void ThreadExecutor::start() {
     attr.priority = n.first->config().priority;
     NodeRunner* r = n.first;
     const TimeUs first = n.second;
-    threads_.push_back(platform_.spawn(attr, [this, r, first] { node_loop(*r, first); }));
+    threads_.push_back(
+        platform_.spawn(attr, [this, r, first] { node_loop(*r, first); }));
   }
   ThreadAttr sup;
   sup.name = "rtsdk-wd";

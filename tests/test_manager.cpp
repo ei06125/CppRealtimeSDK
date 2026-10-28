@@ -13,31 +13,37 @@ namespace {
 
 // Test node behaviours selected by factory type.
 struct Probe {
-  std::vector<std::string> log;                    // "<node>:init" / "<node>:step"
+  std::vector<std::string> log;  // "<node>:init" / "<node>:step"
   std::map<std::string, TimeUs> first_release;
   std::map<std::string, int> inits;
-  int fail_inits_for_bad = 1000;                   // how often "bad_init" nodes fail
+  int fail_inits_for_bad = 1000;  // how often "bad_init" nodes fail
 };
 
 void register_types(ExecutionManager& m, SimPlatform& plat, Probe& pr) {
   m.register_factory("ok", [&pr](const NodeConfig& c) {
-    return std::make_unique<LambdaNode>([&pr, n = c.name](const StepContext& s) {
-      if (!pr.first_release.count(n)) pr.first_release[n] = s.release_us;
-      pr.log.push_back(n);
-      return true;
-    });
+    return std::make_unique<LambdaNode>(
+        [&pr, n = c.name](const StepContext& s) {
+          if (!pr.first_release.count(n)) pr.first_release[n] = s.release_us;
+          pr.log.push_back(n);
+          return true;
+        });
   });
   m.register_factory("bad_init", [](const NodeConfig&) {
-    return std::make_unique<LambdaNode>([](const StepContext&) { return true; }, false);
+    return std::make_unique<LambdaNode>([](const StepContext&) { return true; },
+                                        false);
   });
   m.register_factory("failing", [&pr](const NodeConfig& c) {
-    return std::make_unique<LambdaNode>([&pr, n = c.name](const StepContext&) { pr.log.push_back(n); return false; });
+    return std::make_unique<LambdaNode>([&pr, n = c.name](const StepContext&) {
+      pr.log.push_back(n);
+      return false;
+    });
   });
   m.register_factory("hog", [&plat](const NodeConfig& c) {
-    return std::make_unique<LambdaNode>([&plat, p = c.period_us](const StepContext&) {
-      plat.manual_clock().advance(p);
-      return true;
-    });
+    return std::make_unique<LambdaNode>(
+        [&plat, p = c.period_us](const StepContext&) {
+          plat.manual_clock().advance(p);
+          return true;
+        });
   });
 }
 
@@ -48,7 +54,8 @@ struct Rig {
   Rig() { register_types(m, plat, pr); }
   bool load(const char* text, std::string& err) {
     LaunchConfig c;
-    return LaunchConfig::parse(text, c, err) && m.configure(c, err) && m.start(err, false);
+    return LaunchConfig::parse(text, c, err) && m.configure(c, err) &&
+           m.start(err, false);
   }
   void run(TimeUs until) { drive(plat, *m.tick_scheduler(), until); }
 };
@@ -59,8 +66,11 @@ struct Rig {
 TEST(manager_launch_sequence_offsets_and_dependencies) {
   Rig r;
   std::string err;
-  CHECK(r.load("node a type=ok period_ms=10\nnode b type=ok period_ms=10\nnode c type=ok period_ms=10\n"
-               "start c after=b delay_ms=4\nstart a\nstart b after=a delay_ms=6\n", err));
+  CHECK(r.load(
+      "node a type=ok period_ms=10\nnode b type=ok period_ms=10\nnode c "
+      "type=ok period_ms=10\n"
+      "start c after=b delay_ms=4\nstart a\nstart b after=a delay_ms=6\n",
+      err));
   r.run(30 * kMs);
   CHECK_EQ(r.pr.first_release["a"], 0u);
   CHECK_EQ(r.pr.first_release["b"], 6 * kMs);   // after a (0) + 6
@@ -72,8 +82,11 @@ TEST(manager_launch_sequence_offsets_and_dependencies) {
 TEST(manager_skips_dependents_of_failed_init) {
   Rig r;
   std::string err;
-  CHECK(r.load("node a type=bad_init period_ms=10\nnode b type=ok period_ms=10\nnode c type=ok period_ms=10\n"
-               "start a\nstart b after=a\nstart c\n", err));
+  CHECK(
+      r.load("node a type=bad_init period_ms=10\nnode b type=ok "
+             "period_ms=10\nnode c type=ok period_ms=10\n"
+             "start a\nstart b after=a\nstart c\n",
+             err));
   r.run(30 * kMs);
   NodeStatus a, b, c;
   CHECK(r.m.node("a", a) && r.m.node("b", b) && r.m.node("c", c));
@@ -93,13 +106,17 @@ TEST(manager_rejects_unknown_factory_and_double_start) {
   CHECK(!r2.m.start(err, false));
 }
 
-// Restart policy retries up to max_restarts, then latches safe state and fires the hook.
+// Restart policy retries up to max_restarts, then latches safe state and fires
+// the hook.
 TEST(manager_restarts_failing_node_then_enters_safe_state) {
   Rig r;
   std::string err;
   int hook = 0;
   r.m.set_safe_state_hook([&] { ++hook; });
-  CHECK(r.load("node f type=failing period_ms=10 max_restarts=2 fault_threshold=2\nstart f\n", err));
+  CHECK(
+      r.load("node f type=failing period_ms=10 max_restarts=2 "
+             "fault_threshold=2\nstart f\n",
+             err));
   r.run(400 * kMs);
   NodeStatus f;
   CHECK(r.m.node("f", f));
@@ -118,9 +135,12 @@ TEST(manager_restarts_failing_node_then_enters_safe_state) {
 TEST(manager_stop_policy_isolates_starved_node) {
   Rig r;
   std::string err;
-  CHECK(r.load("node hog type=hog priority=200 period_ms=10 on_fault=ignore\n"
-               "node vic type=ok priority=10 period_ms=20 hb_timeout_ms=60 on_fault=stop\n"
-               "start hog\nstart vic\n", err));
+  CHECK(
+      r.load("node hog type=hog priority=200 period_ms=10 on_fault=ignore\n"
+             "node vic type=ok priority=10 period_ms=20 hb_timeout_ms=60 "
+             "on_fault=stop\n"
+             "start hog\nstart vic\n",
+             err));
   r.run(300 * kMs);
   NodeStatus hog, vic;
   r.m.node("hog", hog);
@@ -129,7 +149,8 @@ TEST(manager_stop_policy_isolates_starved_node) {
   CHECK(hog.state == NodeState::Running);
   CHECK(r.m.state() == ManagerState::Running);
   bool saw_fault = false;
-  for (auto& e : r.m.events_since(0)) saw_fault |= (e.kind == "fault" && e.node == "vic");
+  for (auto& e : r.m.events_since(0))
+    saw_fault |= (e.kind == "fault" && e.node == "vic");
   CHECK(saw_fault);
 }
 
@@ -175,14 +196,18 @@ TEST(manager_kicks_hw_watchdog_only_while_healthy) {
   register_types(m, plat, pr);
   LaunchConfig c;
   std::string err;
-  CHECK(LaunchConfig::parse("node hog type=hog priority=200 period_ms=10 on_fault=ignore\n"
-                            "node vic type=ok priority=10 period_ms=20 hb_timeout_ms=60 on_fault=ignore\n"
-                            "start hog\nstart vic\n", c, err));
+  CHECK(LaunchConfig::parse(
+      "node hog type=hog priority=200 period_ms=10 on_fault=ignore\n"
+      "node vic type=ok priority=10 period_ms=20 hb_timeout_ms=60 "
+      "on_fault=ignore\n"
+      "start hog\nstart vic\n",
+      c, err));
   CHECK(m.configure(c, err) && m.start(err, false));
   drive(plat, *m.tick_scheduler(), 50 * kMs);
   const int healthy_kicks = hw.kicks;
   CHECK(healthy_kicks > 0);
-  drive(plat, *m.tick_scheduler(), 300 * kMs);  // victim starves -> unhealthy, kicks stop
+  drive(plat, *m.tick_scheduler(),
+        300 * kMs);  // victim starves -> unhealthy, kicks stop
   const int after = hw.kicks;
   drive(plat, *m.tick_scheduler(), 400 * kMs);
   CHECK_EQ(hw.kicks, after);

@@ -15,7 +15,9 @@ service ExecutionControl {
 
 message Empty {}
 
-message NodeRequest { string name = 1; }
+message NodeRequest {
+  string name = 1;
+}
 
 message CommandResult {
   bool ok = 1;
@@ -41,14 +43,18 @@ message NodeStatus {
   NodeStats stats = 6;
 }
 
-message NodeList { repeated NodeStatus nodes = 1; }
+message NodeList {
+  repeated NodeStatus nodes = 1;
+}
 
 message ManagerStatus {
   string state = 1;  // idle | running | safe-state | stopped
   uint32 node_count = 2;
 }
 
-message EventsRequest { uint64 after_seq = 1; }
+message EventsRequest {
+  uint64 after_seq = 1;
+}
 
 message Event {
   uint64 seq = 1;

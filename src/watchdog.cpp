@@ -4,14 +4,18 @@ namespace rtsdk {
 
 const char* to_string(FaultKind k) {
   switch (k) {
-    case FaultKind::HeartbeatTimeout: return "heartbeat-timeout";
-    case FaultKind::DeadlineMiss: return "deadline-miss";
-    case FaultKind::StepFailure: return "step-failure";
+    case FaultKind::HeartbeatTimeout:
+      return "heartbeat-timeout";
+    case FaultKind::DeadlineMiss:
+      return "deadline-miss";
+    case FaultKind::StepFailure:
+      return "step-failure";
   }
   return "?";
 }
 
-// Single entry point for all fault sources; counts then forwards to the handler.
+// Single entry point for all fault sources; counts then forwards to the
+// handler.
 void Watchdog::report(std::size_t node, FaultKind kind) {
   faults_.fetch_add(1, std::memory_order_relaxed);
   if (handler_) handler_(Fault{node, kind, clock_.now_us()});

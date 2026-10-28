@@ -41,7 +41,8 @@ bool HeartbeatMonitor::expired(std::size_t id, TimeUs now) const {
   return e.enabled.load(std::memory_order_acquire) && age(id, now) > e.timeout;
 }
 
-// True only for the first caller after an expiry, so each outage is reported once.
+// True only for the first caller after an expiry, so each outage is reported
+// once.
 bool HeartbeatMonitor::latch_expiry(std::size_t id) {
   return !entries_[id].latched.exchange(true, std::memory_order_acq_rel);
 }

@@ -18,8 +18,9 @@ struct Fixture {
   std::vector<std::unique_ptr<NodeRunner>> runners;
   std::vector<LambdaNode*> nodes;
 
-  NodeRunner& add(const char* name, Priority prio, TimeUs period, LambdaNode::Step step,
-                  TimeUs first = 0, TimeUs hb_timeout = 0) {
+  NodeRunner& add(const char* name, Priority prio, TimeUs period,
+                  LambdaNode::Step step, TimeUs first = 0,
+                  TimeUs hb_timeout = 0) {
     NodeConfig c;
     c.name = name;
     c.priority = prio;
@@ -28,7 +29,8 @@ struct Fixture {
     hb.add(c.heartbeat_timeout_us);
     auto n = std::make_unique<LambdaNode>(std::move(step));
     nodes.push_back(n.get());
-    runners.push_back(std::make_unique<NodeRunner>(runners.size(), c, std::move(n)));
+    runners.push_back(
+        std::make_unique<NodeRunner>(runners.size(), c, std::move(n)));
     NodeRunner& r = *runners.back();
     r.init();
     r.start();
@@ -44,7 +46,12 @@ struct Fixture {
 TEST(scheduler_dispatches_highest_priority_first) {
   Fixture f;
   std::vector<std::string> order;
-  auto rec = [&](const char* n) { return [&order, n](const StepContext&) { order.push_back(n); return true; }; };
+  auto rec = [&](const char* n) {
+    return [&order, n](const StepContext&) {
+      order.push_back(n);
+      return true;
+    };
+  };
   f.add("low", 10, 10 * kMs, rec("low"));
   f.add("mid", 50, 10 * kMs, rec("mid"));
   f.add("high", 200, 10 * kMs, rec("high"));
@@ -57,7 +64,12 @@ TEST(scheduler_dispatches_highest_priority_first) {
 TEST(scheduler_equal_priority_is_fifo_by_release) {
   Fixture f;
   std::vector<std::string> order;
-  auto rec = [&](const char* n) { return [&order, n](const StepContext&) { order.push_back(n); return true; }; };
+  auto rec = [&](const char* n) {
+    return [&order, n](const StepContext&) {
+      order.push_back(n);
+      return true;
+    };
+  };
   f.add("late", 100, 10 * kMs, rec("late"), 2 * kMs);
   f.add("early", 100, 10 * kMs, rec("early"), 1 * kMs);
   drive(f.plat, f.ts, 1 * kMs);  // nothing due before 1ms
@@ -81,17 +93,26 @@ TEST(scheduler_periodic_release_count) {
 TEST(scheduler_release_times_are_drift_free) {
   Fixture f;
   std::vector<TimeUs> rel;
-  f.add("p", 100, 10 * kMs, [&](const StepContext& c) { rel.push_back(c.release_us); return true; }, 3 * kMs);
+  f.add(
+      "p", 100, 10 * kMs,
+      [&](const StepContext& c) {
+        rel.push_back(c.release_us);
+        return true;
+      },
+      3 * kMs);
   drive(f.plat, f.ts, 50 * kMs);
   CHECK_EQ(rel.size(), 5u);
-  for (std::size_t i = 0; i < rel.size(); ++i) CHECK_EQ(rel[i], 3 * kMs + i * 10 * kMs);
+  for (std::size_t i = 0; i < rel.size(); ++i)
+    CHECK_EQ(rel[i], 3 * kMs + i * 10 * kMs);
 }
 
 // Misses are counted every time but reported once at fault_threshold.
 TEST(scheduler_deadline_miss_is_counted_and_reported_at_threshold) {
   Fixture f;
   int reported = 0;
-  f.wd.set_handler([&](const Fault& ft) { reported += (ft.kind == FaultKind::DeadlineMiss); });
+  f.wd.set_handler([&](const Fault& ft) {
+    reported += (ft.kind == FaultKind::DeadlineMiss);
+  });
   auto& r = f.add("slow", 100, 10 * kMs, [&](const StepContext&) {
     f.plat.manual_clock().advance(12 * kMs);  // exceeds 10ms deadline
     return true;
@@ -106,8 +127,12 @@ TEST(scheduler_deadline_miss_is_counted_and_reported_at_threshold) {
 TEST(scheduler_nonpreemptive_latency_is_measured) {
   Fixture f;
   // low starts at t=0 and runs 5ms; high is released at t=2ms and must wait.
-  f.add("low", 10, 50 * kMs, [&](const StepContext&) { f.plat.manual_clock().advance(5 * kMs); return true; });
-  auto& hi = f.add("high", 200, 50 * kMs, [](const StepContext&) { return true; }, 2 * kMs);
+  f.add("low", 10, 50 * kMs, [&](const StepContext&) {
+    f.plat.manual_clock().advance(5 * kMs);
+    return true;
+  });
+  auto& hi = f.add(
+      "high", 200, 50 * kMs, [](const StepContext&) { return true; }, 2 * kMs);
   drive(f.plat, f.ts, 10 * kMs);
   CHECK_EQ(hi.stats().max_latency_us, 3 * kMs);
 }
@@ -117,11 +142,28 @@ TEST(scheduler_higher_priority_released_midtick_runs_before_lower_pending) {
   Fixture f;
   std::vector<std::string> order;
   // blocker occupies 3ms; meanwhile low (t=1) and high (t=2) both become ready.
-  f.add("blocker", 255, 100 * kMs, [&](const StepContext&) { order.push_back("blocker"); f.plat.manual_clock().advance(3 * kMs); return true; });
-  f.add("low", 10, 100 * kMs, [&](const StepContext&) { order.push_back("low"); return true; }, 1 * kMs);
-  f.add("high", 100, 100 * kMs, [&](const StepContext&) { order.push_back("high"); return true; }, 2 * kMs);
+  f.add("blocker", 255, 100 * kMs, [&](const StepContext&) {
+    order.push_back("blocker");
+    f.plat.manual_clock().advance(3 * kMs);
+    return true;
+  });
+  f.add(
+      "low", 10, 100 * kMs,
+      [&](const StepContext&) {
+        order.push_back("low");
+        return true;
+      },
+      1 * kMs);
+  f.add(
+      "high", 100, 100 * kMs,
+      [&](const StepContext&) {
+        order.push_back("high");
+        return true;
+      },
+      2 * kMs);
   drive(f.plat, f.ts, 10 * kMs);
-  CHECK(order.size() == 3 && order[0] == "blocker" && order[1] == "high" && order[2] == "low");
+  CHECK(order.size() == 3 && order[0] == "blocker" && order[1] == "high" &&
+        order[2] == "low");
 }
 
 // A starved node stops beating and the watchdog flags it.
@@ -130,11 +172,17 @@ TEST(scheduler_starvation_triggers_heartbeat_timeout) {
   std::vector<Fault> faults;
   f.wd.set_handler([&](const Fault& ft) { faults.push_back(ft); });
   // hog consumes the whole 10ms period at top priority -> victim never runs.
-  f.add("hog", 200, 10 * kMs, [&](const StepContext&) { f.plat.manual_clock().advance(10 * kMs); return true; });
-  f.add("victim", 10, 20 * kMs, [](const StepContext&) { return true; }, 0, 60 * kMs);
+  f.add("hog", 200, 10 * kMs, [&](const StepContext&) {
+    f.plat.manual_clock().advance(10 * kMs);
+    return true;
+  });
+  f.add(
+      "victim", 10, 20 * kMs, [](const StepContext&) { return true; }, 0,
+      60 * kMs);
   drive(f.plat, f.ts, 200 * kMs);
   bool hb_fault = false;
-  for (auto& ft : faults) hb_fault |= (ft.node == 1 && ft.kind == FaultKind::HeartbeatTimeout);
+  for (auto& ft : faults)
+    hb_fault |= (ft.node == 1 && ft.kind == FaultKind::HeartbeatTimeout);
   CHECK(hb_fault);
 }
 

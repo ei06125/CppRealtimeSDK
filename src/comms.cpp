@@ -21,13 +21,15 @@ constexpr std::uint64_t kRingMagic = 0x52544b52494e4731ull;  // "RTKRING1"
 }
 
 // Slot = 4-byte length prefix + payload rounded up to 8 bytes.
-std::size_t SpscRing::required_bytes(std::uint32_t capacity, std::uint32_t max_msg) {
+std::size_t SpscRing::required_bytes(std::uint32_t capacity,
+                                     std::uint32_t max_msg) {
   const std::size_t stride = sizeof(std::uint32_t) + ((max_msg + 7u) & ~7u);
   return sizeof(Header) + stride * capacity;
 }
 
 // Producer-side initialisation; magic is written last to mark the header valid.
-SpscRing SpscRing::create(void* mem, std::uint32_t capacity, std::uint32_t max_msg) {
+SpscRing SpscRing::create(void* mem, std::uint32_t capacity,
+                          std::uint32_t max_msg) {
   Header* h = new (mem) Header();
   h->capacity = capacity;
   h->max_msg = max_msg;
@@ -37,17 +39,20 @@ SpscRing SpscRing::create(void* mem, std::uint32_t capacity, std::uint32_t max_m
   return SpscRing(h);
 }
 
-// Consumer/second process maps existing memory; validates magic and power-of-two capacity.
+// Consumer/second process maps existing memory; validates magic and
+// power-of-two capacity.
 SpscRing SpscRing::attach(void* mem, bool* ok) {
   Header* h = static_cast<Header*>(mem);
-  const bool good = h->magic == kRingMagic && h->capacity && (h->capacity & (h->capacity - 1)) == 0;
+  const bool good = h->magic == kRingMagic && h->capacity &&
+                    (h->capacity & (h->capacity - 1)) == 0;
   if (ok) *ok = good;
   return SpscRing(h);
 }
 
 // Capacity is a power of two, so wrap-around is a mask instead of a modulo.
 unsigned char* SpscRing::slot(std::uint64_t pos) const {
-  return reinterpret_cast<unsigned char*>(hdr_ + 1) + (pos & (hdr_->capacity - 1)) * stride();
+  return reinterpret_cast<unsigned char*>(hdr_ + 1) +
+         (pos & (hdr_->capacity - 1)) * stride();
 }
 
 // Producer: write payload, then publish with a release store of tail. The
@@ -55,7 +60,8 @@ unsigned char* SpscRing::slot(std::uint64_t pos) const {
 bool SpscRing::try_push(const void* msg, std::uint32_t len) {
   if (len > hdr_->max_msg) return false;
   const auto tail = hdr_->tail.load(std::memory_order_relaxed);
-  if (tail - hdr_->head.load(std::memory_order_acquire) >= hdr_->capacity) return false;  // full
+  if (tail - hdr_->head.load(std::memory_order_acquire) >= hdr_->capacity)
+    return false;  // full
   unsigned char* s = slot(tail);
   std::memcpy(s, &len, sizeof(len));
   std::memcpy(s + sizeof(len), msg, len);
@@ -66,7 +72,8 @@ bool SpscRing::try_push(const void* msg, std::uint32_t len) {
 // Consumer mirror of try_push; head is released only after the copy is done.
 bool SpscRing::try_pop(void* out, std::uint32_t* len) {
   const auto head = hdr_->head.load(std::memory_order_relaxed);
-  if (head == hdr_->tail.load(std::memory_order_acquire)) return false;  // empty
+  if (head == hdr_->tail.load(std::memory_order_acquire))
+    return false;  // empty
   const unsigned char* s = slot(head);
   std::uint32_t n;
   std::memcpy(&n, s, sizeof(n));

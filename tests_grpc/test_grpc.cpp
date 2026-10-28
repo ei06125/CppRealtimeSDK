@@ -19,12 +19,16 @@ struct Rig {
 
   Rig() {
     mgr.register_factory("ok", [](const NodeConfig&) {
-      return std::make_unique<LambdaNode>([](const StepContext&) { return true; });
+      return std::make_unique<LambdaNode>(
+          [](const StepContext&) { return true; });
     });
     LaunchConfig c;
     std::string err;
-    LaunchConfig::parse("node a type=ok priority=100 period_ms=10\nnode b type=ok priority=50 period_ms=20\n"
-                        "start a\nstart b after=a\n", c, err);
+    LaunchConfig::parse(
+        "node a type=ok priority=100 period_ms=10\nnode b type=ok priority=50 "
+        "period_ms=20\n"
+        "start a\nstart b after=a\n",
+        c, err);
     mgr.configure(c, err);
     mgr.start(err, false);
     drive(plat, *mgr.tick_scheduler(), 100 * kMs);
@@ -32,7 +36,8 @@ struct Rig {
     int port = 0;
     server = start_control_server(*svc, "127.0.0.1:0", &port);
     stub = v1::ExecutionControl::NewStub(
-        grpc::CreateChannel("127.0.0.1:" + std::to_string(port), grpc::InsecureChannelCredentials()));
+        grpc::CreateChannel("127.0.0.1:" + std::to_string(port),
+                            grpc::InsecureChannelCredentials()));
   }
   ~Rig() { server->Shutdown(); }
 };
@@ -86,7 +91,8 @@ TEST(grpc_event_stream_delivers_history_and_new_events) {
   CHECK_EQ(launch, 2);
   r.mgr.stop_node("b");  // new event after the stream started
   bool saw = false;
-  while (!saw && reader->Read(&ev)) saw = (ev.kind() == "command" && ev.node() == "b");
+  while (!saw && reader->Read(&ev))
+    saw = (ev.kind() == "command" && ev.node() == "b");
   CHECK(saw);
   ctx.TryCancel();
 }

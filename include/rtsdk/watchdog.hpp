@@ -10,7 +10,11 @@
 
 namespace rtsdk {
 
-enum class FaultKind : std::uint8_t { HeartbeatTimeout, DeadlineMiss, StepFailure };
+enum class FaultKind : std::uint8_t {
+  HeartbeatTimeout,
+  DeadlineMiss,
+  StepFailure
+};
 const char* to_string(FaultKind k);
 
 struct Fault {

@@ -17,7 +17,9 @@ class NodeRunner {
 
   std::size_t id() const { return id_; }
   const NodeConfig& config() const { return cfg_; }
-  TimeUs deadline_us() const { return cfg_.deadline_us ? cfg_.deadline_us : cfg_.period_us; }
+  TimeUs deadline_us() const {
+    return cfg_.deadline_us ? cfg_.deadline_us : cfg_.period_us;
+  }
   NodeState state() const { return state_.load(std::memory_order_acquire); }
   NodeStats stats() const;
   std::uint32_t restarts() const { return restarts_.load(); }
@@ -37,7 +39,9 @@ class NodeRunner {
     TimeUs end_us = 0;
   };
   JobResult run_job(IClock& clock, TimeUs release_us, std::uint64_t cycle);
-  void note_skipped_release() { skipped_.fetch_add(1, std::memory_order_relaxed); }
+  void note_skipped_release() {
+    skipped_.fetch_add(1, std::memory_order_relaxed);
+  }
 
  private:
   void reset_counters();
@@ -56,6 +60,7 @@ class NodeRunner {
 
 // Runs one job, updates heartbeat, and reports threshold-crossing faults.
 // Returns false if the job did not run (node not Running).
-bool execute_job(NodeRunner& r, IClock& clock, Watchdog& wd, TimeUs release_us, std::uint64_t cycle);
+bool execute_job(NodeRunner& r, IClock& clock, Watchdog& wd, TimeUs release_us,
+                 std::uint64_t cycle);
 
 }  // namespace rtsdk

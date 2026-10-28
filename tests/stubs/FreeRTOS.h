@@ -1,4 +1,5 @@
-// Declarations-only stand-in so the FreeRTOS backend is compile-checked without the kernel.
+// Declarations-only stand-in so the FreeRTOS backend is compile-checked without
+// the kernel.
 #pragma once
 #include <stdint.h>
 #define configTICK_RATE_HZ 1000

@@ -1,4 +1,5 @@
-// Test runner entry point: runs all registered TEST()s, optional name filter in argv[1].
+// Test runner entry point: runs all registered TEST()s, optional name filter in
+// argv[1].
 #include <cstring>
 
 #include "rt_test.hpp"

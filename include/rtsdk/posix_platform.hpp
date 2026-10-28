@@ -17,7 +17,8 @@ class PosixClock final : public IClock {
 class PosixPlatform final : public IPlatform {
  public:
   IClock& clock() override { return clock_; }
-  std::unique_ptr<IThread> spawn(const ThreadAttr& attr, std::function<void()> body) override;
+  std::unique_ptr<IThread> spawn(const ThreadAttr& attr,
+                                 std::function<void()> body) override;
   bool realtime_priorities_active() const override { return rt_ok_.load(); }
   // Maps portable 0..255 onto the SCHED_FIFO range.
   static int map_priority(Priority p);

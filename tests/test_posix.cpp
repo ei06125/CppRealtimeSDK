@@ -36,15 +36,24 @@ TEST(posix_thread_executor_runs_periodic_nodes_and_stops) {
   ExecutionManager m(plat, ExecutionManager::Mode::Threads);
   std::atomic<int> a{0}, b{0};
   m.register_factory("a", [&](const NodeConfig&) {
-    return std::make_unique<LambdaNode>([&](const StepContext&) { ++a; return true; });
+    return std::make_unique<LambdaNode>([&](const StepContext&) {
+      ++a;
+      return true;
+    });
   });
   m.register_factory("b", [&](const NodeConfig&) {
-    return std::make_unique<LambdaNode>([&](const StepContext&) { ++b; return true; });
+    return std::make_unique<LambdaNode>([&](const StepContext&) {
+      ++b;
+      return true;
+    });
   });
   LaunchConfig c;
   std::string err;
-  CHECK(LaunchConfig::parse("node a type=a priority=200 period_ms=5\nnode b type=b priority=50 period_ms=10\n"
-                            "start a\nstart b after=a\n", c, err));
+  CHECK(
+      LaunchConfig::parse("node a type=a priority=200 period_ms=5\nnode b "
+                          "type=b priority=50 period_ms=10\n"
+                          "start a\nstart b after=a\n",
+                          c, err));
   CHECK(m.configure(c, err) && m.start(err));
   std::this_thread::sleep_for(std::chrono::milliseconds(300));
   m.stop();
@@ -66,14 +75,18 @@ TEST(posix_hung_node_escalates_to_safe_state) {
     return std::make_unique<LambdaNode>([&](const StepContext& s) {
       if (s.cycle == 3) {
         hang = true;
-        while (!release.load()) std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        while (!release.load())
+          std::this_thread::sleep_for(std::chrono::milliseconds(1));
       }
       return true;
     });
   });
   LaunchConfig c;
   std::string err;
-  CHECK(LaunchConfig::parse("node h type=hang period_ms=5 hb_timeout_ms=30 on_fault=restart\nstart h\n", c, err));
+  CHECK(
+      LaunchConfig::parse("node h type=hang period_ms=5 hb_timeout_ms=30 "
+                          "on_fault=restart\nstart h\n",
+                          c, err));
   CHECK(m.configure(c, err) && m.start(err));
   for (int i = 0; i < 200 && m.state() == ManagerState::Running; ++i)
     std::this_thread::sleep_for(std::chrono::milliseconds(5));
@@ -90,7 +103,8 @@ TEST(posix_high_priority_node_has_bounded_latency_under_load) {
   PosixPlatform plat;
   ExecutionManager m(plat, ExecutionManager::Mode::Threads);
   m.register_factory("hi", [](const NodeConfig&) {
-    return std::make_unique<LambdaNode>([](const StepContext&) { return true; });
+    return std::make_unique<LambdaNode>(
+        [](const StepContext&) { return true; });
   });
   m.register_factory("busy", [&](const NodeConfig&) {
     return std::make_unique<LambdaNode>([&](const StepContext&) {
@@ -102,8 +116,11 @@ TEST(posix_high_priority_node_has_bounded_latency_under_load) {
   });
   LaunchConfig c;
   std::string err;
-  CHECK(LaunchConfig::parse("node hi type=hi priority=250 period_ms=5\nnode busy type=busy priority=10 period_ms=5\n"
-                            "start hi\nstart busy\n", c, err));
+  CHECK(
+      LaunchConfig::parse("node hi type=hi priority=250 period_ms=5\nnode busy "
+                          "type=busy priority=10 period_ms=5\n"
+                          "start hi\nstart busy\n",
+                          c, err));
   CHECK(m.configure(c, err) && m.start(err));
   std::this_thread::sleep_for(std::chrono::milliseconds(300));
   m.stop();

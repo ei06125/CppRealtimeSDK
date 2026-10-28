@@ -14,7 +14,8 @@ class SimPlatform final : public IPlatform {
   ManualClock& manual_clock() { return clock_; }
   bool realtime_priorities_active() const override { return false; }
 
-  std::unique_ptr<IThread> spawn(const ThreadAttr&, std::function<void()> body) override {
+  std::unique_ptr<IThread> spawn(const ThreadAttr&,
+                                 std::function<void()> body) override {
     struct T final : IThread {
       std::thread t;
       void join() override {

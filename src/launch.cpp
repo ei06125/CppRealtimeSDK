@@ -8,7 +8,9 @@ namespace {
 
 // Strict decimal parser (no sign, no overflow: at most 18 digits).
 bool parse_u64(const std::string& s, std::uint64_t& v) {
-  if (s.empty() || s.find_first_not_of("0123456789") != std::string::npos || s.size() > 18) return false;
+  if (s.empty() || s.find_first_not_of("0123456789") != std::string::npos ||
+      s.size() > 18)
+    return false;
   v = std::stoull(s);
   return true;
 }
@@ -33,10 +35,12 @@ std::vector<std::string> split(const std::string& s, char sep) {
 
 // Line-oriented parser. Grammar:
 //   node <name> type=<t> [priority= period_ms= deadline_ms= hb_timeout_ms=
-//                         max_restarts= fault_threshold= on_fault=ignore|restart|stop|safe]
+//                         max_restarts= fault_threshold=
+//                         on_fault=ignore|restart|stop|safe]
 //   start <name> [after=a,b] [delay_ms=N]
 // "#" starts a comment. Unknown keys are errors so typos never go unnoticed.
-bool LaunchConfig::parse(const std::string& text, LaunchConfig& out, std::string& error) {
+bool LaunchConfig::parse(const std::string& text, LaunchConfig& out,
+                         std::string& error) {
   out = LaunchConfig{};
   std::istringstream in(text);
   std::string line;
@@ -57,10 +61,12 @@ bool LaunchConfig::parse(const std::string& text, LaunchConfig& out, std::string
     std::string tok;
     while (ls >> tok) {
       auto eq = tok.find('=');
-      if (eq == std::string::npos || eq == 0) return fail("expected key=value, got '" + tok + "'");
+      if (eq == std::string::npos || eq == 0)
+        return fail("expected key=value, got '" + tok + "'");
       kv[tok.substr(0, eq)] = tok.substr(eq + 1);
     }
-    // Reads an optional numeric key, scaling units (ms -> us); absent keys keep the default.
+    // Reads an optional numeric key, scaling units (ms -> us); absent keys keep
+    // the default.
     auto num = [&](const char* key, std::uint64_t& v, std::uint64_t scale) {
       auto it = kv.find(key);
       if (it == kv.end()) return true;
@@ -75,14 +81,16 @@ bool LaunchConfig::parse(const std::string& text, LaunchConfig& out, std::string
       NodeSpec spec;
       spec.config.name = name;
       std::uint64_t prio = spec.config.priority;
-      std::uint64_t restarts = spec.config.max_restarts, thr = spec.config.fault_threshold;
+      std::uint64_t restarts = spec.config.max_restarts,
+                    thr = spec.config.fault_threshold;
       std::uint64_t dl_us = 0, hb_us = 0, period_us = spec.config.period_us;
       if (!num("priority", prio, 1) || prio > 255) return fail("bad priority");
       if (!num("period_ms", period_us, kMs)) return fail("bad period_ms");
       if (!num("deadline_ms", dl_us, kMs)) return fail("bad deadline_ms");
       if (!num("hb_timeout_ms", hb_us, kMs)) return fail("bad hb_timeout_ms");
       if (!num("max_restarts", restarts, 1)) return fail("bad max_restarts");
-      if (!num("fault_threshold", thr, 1) || thr == 0) return fail("bad fault_threshold");
+      if (!num("fault_threshold", thr, 1) || thr == 0)
+        return fail("bad fault_threshold");
       if (period_us == 0) return fail("period_ms must be > 0");
       spec.config.priority = static_cast<Priority>(prio);
       spec.config.period_us = period_us;
@@ -92,11 +100,16 @@ bool LaunchConfig::parse(const std::string& text, LaunchConfig& out, std::string
       spec.config.fault_threshold = static_cast<std::uint32_t>(thr);
       if (auto it = kv.find("on_fault"); it != kv.end()) {
         const auto& v = it->second;
-        if (v == "ignore") spec.config.on_fault = FaultAction::Ignore;
-        else if (v == "restart") spec.config.on_fault = FaultAction::RestartNode;
-        else if (v == "stop") spec.config.on_fault = FaultAction::StopNode;
-        else if (v == "safe") spec.config.on_fault = FaultAction::SafeState;
-        else return fail("bad on_fault '" + v + "'");
+        if (v == "ignore")
+          spec.config.on_fault = FaultAction::Ignore;
+        else if (v == "restart")
+          spec.config.on_fault = FaultAction::RestartNode;
+        else if (v == "stop")
+          spec.config.on_fault = FaultAction::StopNode;
+        else if (v == "safe")
+          spec.config.on_fault = FaultAction::SafeState;
+        else
+          return fail("bad on_fault '" + v + "'");
         kv.erase(it);
       }
       if (auto it = kv.find("type"); it != kv.end()) {
@@ -129,7 +142,8 @@ bool LaunchConfig::parse(const std::string& text, LaunchConfig& out, std::string
 }
 
 // Validates the sequence and produces a start order honouring "after=".
-bool LaunchConfig::resolve_order(std::vector<std::size_t>& order, std::string& error) const {
+bool LaunchConfig::resolve_order(std::vector<std::size_t>& order,
+                                 std::string& error) const {
   order.clear();
   std::map<std::string, std::size_t> step_of;  // node name -> step index
   for (std::size_t i = 0; i < steps.size(); ++i) {
@@ -147,7 +161,8 @@ bool LaunchConfig::resolve_order(std::vector<std::size_t>& order, std::string& e
   for (const auto& s : steps)
     for (const auto& d : s.after)
       if (!step_of.count(d)) {
-        error = "'" + s.node + "' depends on '" + d + "' which is never started";
+        error =
+            "'" + s.node + "' depends on '" + d + "' which is never started";
         return false;
       }
   // Kahn's algorithm; stable w.r.t. declaration order. No progress in a full

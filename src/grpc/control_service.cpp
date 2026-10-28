@@ -25,25 +25,33 @@ void fill(const NodeStatus& s, v1::NodeStatus* o) {
 
 }  // namespace
 
-grpc::Status ControlService::GetStatus(grpc::ServerContext*, const v1::Empty*, v1::ManagerStatus* out) {
+grpc::Status ControlService::GetStatus(grpc::ServerContext*, const v1::Empty*,
+                                       v1::ManagerStatus* out) {
   out->set_state(to_string(mgr_.state()));
   out->set_node_count(static_cast<std::uint32_t>(mgr_.nodes().size()));
   return grpc::Status::OK;
 }
 
-grpc::Status ControlService::ListNodes(grpc::ServerContext*, const v1::Empty*, v1::NodeList* out) {
+grpc::Status ControlService::ListNodes(grpc::ServerContext*, const v1::Empty*,
+                                       v1::NodeList* out) {
   for (const auto& n : mgr_.nodes()) fill(n, out->add_nodes());
   return grpc::Status::OK;
 }
 
-grpc::Status ControlService::RestartNode(grpc::ServerContext*, const v1::NodeRequest* in, v1::CommandResult* out) {
+grpc::Status ControlService::RestartNode(grpc::ServerContext*,
+                                         const v1::NodeRequest* in,
+                                         v1::CommandResult* out) {
   const bool ok = mgr_.restart_node(in->name());
   out->set_ok(ok);
-  out->set_message(ok ? "restarted" : "unknown node, manager not running, or node unresponsive");
+  out->set_message(
+      ok ? "restarted"
+         : "unknown node, manager not running, or node unresponsive");
   return grpc::Status::OK;
 }
 
-grpc::Status ControlService::StopNode(grpc::ServerContext*, const v1::NodeRequest* in, v1::CommandResult* out) {
+grpc::Status ControlService::StopNode(grpc::ServerContext*,
+                                      const v1::NodeRequest* in,
+                                      v1::CommandResult* out) {
   const bool ok = mgr_.stop_node(in->name());
   out->set_ok(ok);
   out->set_message(ok ? "stopped" : "unknown node or node unresponsive");
@@ -53,8 +61,9 @@ grpc::Status ControlService::StopNode(grpc::ServerContext*, const v1::NodeReques
 // Server-streaming: replays history after `after_seq`, then polls for new
 // events every 100 ms until the client cancels. Polling keeps the manager free
 // of any gRPC dependency.
-grpc::Status ControlService::StreamEvents(grpc::ServerContext* ctx, const v1::EventsRequest* in,
-                                          grpc::ServerWriter<v1::Event>* writer) {
+grpc::Status ControlService::StreamEvents(
+    grpc::ServerContext* ctx, const v1::EventsRequest* in,
+    grpc::ServerWriter<v1::Event>* writer) {
   std::uint64_t cursor = in->after_seq();
   while (!ctx->IsCancelled()) {
     for (const auto& e : mgr_.events_since(cursor)) {
@@ -72,11 +81,14 @@ grpc::Status ControlService::StreamEvents(grpc::ServerContext* ctx, const v1::Ev
   return grpc::Status::OK;
 }
 
-// Convenience wrapper; pass port 0 in `address` and read selected_port for tests.
-std::unique_ptr<grpc::Server> start_control_server(ControlService& svc, const std::string& address,
+// Convenience wrapper; pass port 0 in `address` and read selected_port for
+// tests.
+std::unique_ptr<grpc::Server> start_control_server(ControlService& svc,
+                                                   const std::string& address,
                                                    int* selected_port) {
   grpc::ServerBuilder b;
-  b.AddListeningPort(address, grpc::InsecureServerCredentials(), selected_port);  // put mTLS in front for production
+  b.AddListeningPort(address, grpc::InsecureServerCredentials(),
+                     selected_port);  // put mTLS in front for production
   b.RegisterService(&svc);
   return b.BuildAndStart();
 }
