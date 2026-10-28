@@ -1,0 +1,26 @@
+# Opt-in gRPC control plane: bazel build //src/grpc:rtsdk_grpc
+# (kept in its own package so the core never needs the gRPC repo to load).
+load("@com_github_grpc_grpc//bazel:cc_grpc_library.bzl", "cc_grpc_library")
+
+cc_grpc_library(
+    name = "execution_control_cc_grpc",
+    srcs = ["//proto:execution_control_proto"],
+    grpc_only = False,
+    deps = [],
+)
+
+# Thin adapter: ExecutionManager <-> generated gRPC service.
+cc_library(
+    name = "rtsdk_grpc",
+    srcs = [
+        "control_service.cpp",
+        "control_service.hpp",
+    ],
+    copts = ["-std=c++17"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":execution_control_cc_grpc",
+        "//:rtsdk_core",
+        "@com_github_grpc_grpc//:grpc++",
+    ],
+)

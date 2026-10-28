@@ -1,0 +1,8 @@
+# Wire contract of the external control plane (language-neutral; reuse for clients).
+load("@com_google_protobuf//bazel:proto_library.bzl", "proto_library")
+
+proto_library(
+    name = "execution_control_proto",
+    srcs = ["execution_control.proto"],
+    visibility = ["//visibility:public"],
+)

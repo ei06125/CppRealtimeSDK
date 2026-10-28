@@ -1,0 +1,102 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
+
+package(default_visibility = ["//visibility:public"])
+
+COPTS = [
+    "-std=c++17",
+    "-Wall",
+    "-Wextra",
+    "-Wpedantic",
+    "-Werror",
+]
+
+# Platform-agnostic core (depends only on include/rtsdk/osal.hpp).
+cc_library(
+    name = "rtsdk_core",
+    srcs = glob(["src/*.cpp"]),
+    hdrs = glob(
+        ["include/rtsdk/*.hpp"],
+        exclude = [
+            "include/rtsdk/posix_platform.hpp",
+            "include/rtsdk/freertos_platform.hpp",
+        ],
+    ),
+    copts = COPTS,
+    includes = ["include"],
+    linkopts = ["-pthread"],
+)
+
+# POSIX / Yocto backend.
+cc_library(
+    name = "rtsdk_posix",
+    srcs = ["src/platform/posix/posix_platform.cpp"],
+    hdrs = ["include/rtsdk/posix_platform.hpp"],
+    copts = COPTS,
+    includes = ["include"],
+    linkopts = select({
+        "@platforms//os:macos": [],
+        "//conditions:default": ["-lrt"],
+    }),
+    deps = [":rtsdk_core"],
+)
+
+# FreeRTOS backend: the application supplies the kernel headers via :freertos_headers.
+cc_library(
+    name = "rtsdk_freertos",
+    srcs = ["src/platform/freertos/freertos_platform.cpp"],
+    hdrs = ["include/rtsdk/freertos_platform.hpp"],
+    copts = COPTS,
+    includes = ["include"],
+    tags = ["manual"],
+    deps = [
+        ":rtsdk_core",
+        # "//third_party/freertos:headers",
+    ],
+)
+
+# Compile-check of the FreeRTOS backend against declaration stubs (built by
+# `bazel build //...`; deliberately not linked into any test: the kernel
+# symbols are only declared).
+cc_library(
+    name = "rtsdk_freertos_syntax",
+    srcs = ["src/platform/freertos/freertos_platform.cpp"],
+    hdrs = ["include/rtsdk/freertos_platform.hpp"] + glob(["tests/stubs/*.h"]),
+    copts = COPTS,
+    includes = [
+        "include",
+        "tests/stubs",
+    ],
+    deps = [":rtsdk_core"],
+)
+
+cc_test(
+    name = "rtsdk_tests",
+    srcs = glob(["tests/*.cpp", "tests/*.hpp"]),
+    copts = COPTS,
+    deps = [
+        ":rtsdk_core",
+        ":rtsdk_posix",
+    ],
+)
+
+cc_test(
+    name = "rtsdk_perf",
+    srcs = ["bench/bench.cpp"],
+    args = ["--check"],
+    copts = COPTS,
+    tags = ["exclusive"],  # timing-sensitive: do not share the machine
+    deps = [
+        ":rtsdk_core",
+        ":rtsdk_posix",
+    ],
+)
+
+cc_binary(
+    name = "example_adas",
+    srcs = ["examples/adas_demo.cpp"],
+    copts = COPTS,
+    deps = [
+        ":rtsdk_core",
+        ":rtsdk_posix",
+    ],
+)

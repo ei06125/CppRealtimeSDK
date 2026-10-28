@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package rtsdk.v1;
+
+// Out-of-vehicle / diagnostic control plane of the execution manager.
+// The real-time path never touches gRPC: this runs on a non-RT thread.
+service ExecutionControl {
+  rpc GetStatus(Empty) returns (ManagerStatus);
+  rpc ListNodes(Empty) returns (NodeList);
+  rpc RestartNode(NodeRequest) returns (CommandResult);
+  rpc StopNode(NodeRequest) returns (CommandResult);
+  // Server-streaming event log (launch steps, faults, actions, state changes).
+  rpc StreamEvents(EventsRequest) returns (stream Event);
+}
+
+message Empty {}
+
+message NodeRequest { string name = 1; }
+
+message CommandResult {
+  bool ok = 1;
+  string message = 2;
+}
+
+message NodeStats {
+  uint64 cycles = 1;
+  uint64 deadline_misses = 2;
+  uint64 skipped_releases = 3;
+  uint64 step_failures = 4;
+  uint64 max_exec_us = 5;
+  uint64 max_latency_us = 6;
+  uint64 total_exec_us = 7;
+}
+
+message NodeStatus {
+  string name = 1;
+  string state = 2;  // created | initialized | running | faulted | stopped
+  uint32 priority = 3;
+  uint64 period_us = 4;
+  uint32 restarts = 5;
+  NodeStats stats = 6;
+}
+
+message NodeList { repeated NodeStatus nodes = 1; }
+
+message ManagerStatus {
+  string state = 1;  // idle | running | safe-state | stopped
+  uint32 node_count = 2;
+}
+
+message EventsRequest { uint64 after_seq = 1; }
+
+message Event {
+  uint64 seq = 1;
+  uint64 at_us = 2;
+  string kind = 3;
+  string node = 4;
+  string detail = 5;
+}

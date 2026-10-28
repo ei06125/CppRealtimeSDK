@@ -1,0 +1,7 @@
+# Bzlmod manifest. Versions are pinned for reproducible builds.
+module(name = "rtsdk", version = "0.1.0")
+
+bazel_dep(name = "rules_cc", version = "0.0.17")
+# protobuf/gRPC are only used by //src/grpc and //proto (opt-in control plane).
+bazel_dep(name = "protobuf", version = "29.3", repo_name = "com_google_protobuf")
+bazel_dep(name = "grpc", version = "1.69.0", repo_name = "com_github_grpc_grpc")
