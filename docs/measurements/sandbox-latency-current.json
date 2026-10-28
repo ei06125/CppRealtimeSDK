@@ -1,0 +1,68 @@
+{
+  "measured_utc": "2026-10-27T13:18:41.222504+00:00",
+  "environment": "Shared Linux sandbox, ordinary scheduling, one probe node; validation builds/tests overlapped initial collection. No CPU isolation.",
+  "kernel": "7.0.14",
+  "build_type": "Release",
+  "compiler": "15.2.0",
+  "source_sha256": {
+    "src/scheduler.cpp": "063016eaaaea3ea0e86b23cbcbaf15a8e23d7b8cc1c85f9d2de3fe8b37cfe053",
+    "include/rtx/scheduler.hpp": "ad8e553fb1f0d475217ef7355cc1b64ab0045f763c5e587caa302885a77c328c",
+    "src/posix.cpp": "9596df866212df6d351f37c2dc60a0e9e07d8a1978c1d28d7a55a8c8d44c2fb3",
+    "src/posix_tasks.cpp": "bc55fdb5c17b571600a1823caa90c00c75e103b8e9f17be97ff5f36104d16ba2",
+    "tests/latency.cpp": "7ef26831dcb15bd2f846a5ab8e0e6ff99f1d2c0e50d6934c6f5d4566b4b09394"
+  },
+  "heartbeat_dispatch": "std::function reference_wrapper to stack callable",
+  "synthetic_benchmark": "dispatch mean ns: 29 (100000 synthetic releases)",
+  "reports": [
+    {
+      "mode": "cooperative",
+      "architecture": "aarch64",
+      "samples": 10000,
+      "period_ns": 1000000,
+      "poll_resolution_ns": 100000,
+      "clock_resolution_ns": 1,
+      "elapsed_ns": 10000158380,
+      "release_lateness_ns": {
+        "min": 86,
+        "p50": 76878,
+        "p95": 117542,
+        "p99": 131543,
+        "max": 1366208
+      },
+      "absolute_interval_jitter_ns": {
+        "min": 0,
+        "p50": 28834,
+        "p95": 84167,
+        "p99": 103959,
+        "max": 1276666
+      },
+      "deadline_misses": 1,
+      "skipped_releases": 1
+    },
+    {
+      "mode": "workers",
+      "architecture": "aarch64",
+      "samples": 10000,
+      "period_ns": 1000000,
+      "poll_resolution_ns": 100000,
+      "clock_resolution_ns": 1,
+      "elapsed_ns": 9999148713,
+      "release_lateness_ns": {
+        "min": 126,
+        "p50": 104627,
+        "p95": 217087,
+        "p99": 229087,
+        "max": 303458
+      },
+      "absolute_interval_jitter_ns": {
+        "min": 166,
+        "p50": 92083,
+        "p95": 158667,
+        "p99": 175000,
+        "max": 227583
+      },
+      "deadline_misses": 0,
+      "skipped_releases": 0
+    }
+  ]
+}

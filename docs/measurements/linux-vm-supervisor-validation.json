@@ -1,0 +1,135 @@
+{
+  "measured_utc": "2026-10-27T13:28:36.211102+00:00",
+  "guest": "Ubuntu ARM64 generic Linux 7.0.0-38.38",
+  "kernel_sha256": "03e825cd257ae2e376e9cac06ab1372e9e5a67a7ca27b13100c9c51efcb2f7ef",
+  "qemu": "QEMU emulator version 10.2.1 (Debian 1:10.2.1+ds-1ubuntu3.3)",
+  "machine": "virt",
+  "cpu": "cortex-a72",
+  "vcpus": 1,
+  "memory_mib": 512,
+  "build_type": "Release shared",
+  "grpc": true,
+  "guest_root": true,
+  "tests": [
+    {
+      "name": "rtx_control_tests",
+      "exit_code": 0,
+      "binary_sha256": "62d77ec7ff91f86cd395d1f0abfeb349cdb5172c14f1fa123b652d8f4011543c"
+    },
+    {
+      "name": "rtx_dispatch_allocation_tests",
+      "exit_code": 0,
+      "binary_sha256": "c110ffddc7d0639e7533d87b82513cb0db11bd0cb1009eb6c7df0f97a6b813d1"
+    },
+    {
+      "name": "rtx_fault_tests",
+      "exit_code": 0,
+      "binary_sha256": "05cdbd566b2df6b90cc844f5c674c24bdf9ca2db6f33c2c9d6638beec815c580"
+    },
+    {
+      "name": "rtx_fifo_tests",
+      "exit_code": 0,
+      "binary_sha256": "b0c6cd8285e54fea8d524fa5cb48d6faf18ff02d0e626df572578b69cf2b080e"
+    },
+    {
+      "name": "rtx_launch_tests",
+      "exit_code": 0,
+      "binary_sha256": "a0b9a834cb45402406e03b33c705ce604e1474455f96dd37dc8eb30cbaeb7ec0"
+    },
+    {
+      "name": "rtx_launch_watchdog_tests",
+      "exit_code": 0,
+      "binary_sha256": "e7ffc7d1db0c7152b6f4f9d64a648a3f19437a75320a6cb2cc1f22ce9a24ed53"
+    },
+    {
+      "name": "rtx_lifecycle_tests",
+      "exit_code": 0,
+      "binary_sha256": "745cd41074f6e9325bf3db5adc1a40c5b4bf42801eae0efecf41877c72f4a4d3"
+    },
+    {
+      "name": "rtx_pipeline_tests",
+      "exit_code": 0,
+      "binary_sha256": "c4ca7a6b8c132988ea1d0eb0883436731e8279817bd41c1ae62e94a65cb9cbe3"
+    },
+    {
+      "name": "rtx_posix_clock_fault_tests",
+      "exit_code": 0,
+      "binary_sha256": "d04cc5195ed19473585c580f459a00f076e8560691d0bf563e8104601e03fdb9"
+    },
+    {
+      "name": "rtx_runner_ownership_tests",
+      "exit_code": 0,
+      "binary_sha256": "3a87a43d106cf67d6b4cdb489b77c00d70de4b9748c189fb6ee95ff7210122a5"
+    },
+    {
+      "name": "rtx_runtime_fault_tests",
+      "exit_code": 0,
+      "binary_sha256": "e3b2033e3f21b52cba758a94c712d224df641fdd78299fb7b80418276ef29269"
+    },
+    {
+      "name": "rtx_shared_memory_tests",
+      "exit_code": 0,
+      "binary_sha256": "11d89dc4de074fcfcfc492661093a86a8ab8436d36e2156129d16cba448715ca"
+    },
+    {
+      "name": "rtx_shm_setup_fault_tests",
+      "exit_code": 0,
+      "binary_sha256": "261c8025835165a2e228c52b6f0025c365e6704f85e35eae7335c5b1ebac8379"
+    },
+    {
+      "name": "rtx_stop_latency_tests",
+      "exit_code": 0,
+      "binary_sha256": "704e9e2655d09fe546c64d31d3193e1e232d7ec08519e61780e6e2ec32f48e5d"
+    },
+    {
+      "name": "rtx_stress_tests",
+      "exit_code": 0,
+      "binary_sha256": "3529a0bea9c8664097e3d458b94a51ab4503aab8c662867f44c4bd05337d9279"
+    },
+    {
+      "name": "rtx_tasks_tests",
+      "exit_code": 0,
+      "binary_sha256": "9bd0b12cb9e2d354f6c86df24f32398c592338224d81a3f9bb2380ab4f9bfbac"
+    },
+    {
+      "name": "rtx_tests",
+      "exit_code": 0,
+      "binary_sha256": "1871019b145abb73f5826ad3ac9b0edf05008a3276192170e780738296a561d7"
+    },
+    {
+      "name": "rtx_time_tests",
+      "exit_code": 0,
+      "binary_sha256": "24ebcf22d24cf08d361c4c0173df323090d66bc37a522568356ec7541fcdbf37"
+    },
+    {
+      "name": "rtx_watchdog_tests",
+      "exit_code": 0,
+      "binary_sha256": "43215cf6e0d082722b22b8f480e7e574e848352277035d351bc8fba193ffd8e3"
+    }
+  ],
+  "skipped": 0,
+  "fifo_evidence": "higher-priority FIFO callback preempted busy lower-priority callback on CPU 0",
+  "serial_log": "linux-vm-supervisor-serial.log",
+  "limits": [
+    "emulated Linux scheduling behavior, not hardware timing",
+    "not a Yocto image",
+    "installed-consumer test excluded",
+    "hosted CI job defined but not executed"
+  ],
+  "runner_sha256": "24568fdd646c298bfd0c334f1a599666690bfe75a5bc4efc857125828f4039de",
+  "runner_negative_check": "guest exit 77 rejected as failure",
+  "fifo_supervisor": {
+    "policy": "SCHED_FIFO",
+    "priority": "max(node priority)+1",
+    "startup": "all policies configured before callback launch",
+    "poll_resolution_ns": 1000000,
+    "watchdog_ns": 3000000,
+    "busy_launch_callback_ns": 40000000,
+    "result": "callback observed heartbeat timeout before yielding or returning"
+  },
+  "source_sha256": {
+    "src/posix_tasks.cpp": "44d1aacd07df1ede77de4fc504e6dc2a0fab891ecda85ebd3b413ebcfb519df3",
+    "tests/fifo_test.cpp": "d756436b39b553c1a42905be59a694c37c273f917d5c7e44d392f5abf691d662",
+    "tests/posix_clock_fault_test.cpp": "ad65406cba1dbd207bf473b5f1363275dd7c0f3443620866d03cb30c1bdff4f4"
+  }
+}

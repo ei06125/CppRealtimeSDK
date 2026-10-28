@@ -1,0 +1,108 @@
+{
+  "measured_utc": "2026-10-27T13:22:10.445370+00:00",
+  "guest": "Ubuntu ARM64 generic Linux 7.0.0-38.38",
+  "kernel_sha256": "03e825cd257ae2e376e9cac06ab1372e9e5a67a7ca27b13100c9c51efcb2f7ef",
+  "qemu": "QEMU emulator version 10.2.1 (Debian 1:10.2.1+ds-1ubuntu3.3)",
+  "machine": "virt",
+  "cpu": "cortex-a72",
+  "vcpus": 1,
+  "memory_mib": 512,
+  "build_type": "Release",
+  "grpc": false,
+  "guest_root": true,
+  "tests": [
+    {
+      "name": "rtx_dispatch_allocation_tests",
+      "exit_code": 0,
+      "binary_sha256": "a62c468da8e41bb0d9e7c330daa1c7530477a13f0f99d9c97ed1aee66a938c01"
+    },
+    {
+      "name": "rtx_fault_tests",
+      "exit_code": 0,
+      "binary_sha256": "6a099c08189e4b1a9e8d71ca8db91c7550f416534cb9659382341940a2d64284"
+    },
+    {
+      "name": "rtx_fifo_tests",
+      "exit_code": 0,
+      "binary_sha256": "ab1b3e87f29ea4b34fa4638ed2292a05422310528a24e83531ab56a7d0b9b0c4"
+    },
+    {
+      "name": "rtx_launch_tests",
+      "exit_code": 0,
+      "binary_sha256": "218510fd0560d2202551ebb93bdc7c97e17a140243ba85cda55c3b748f6c8914"
+    },
+    {
+      "name": "rtx_launch_watchdog_tests",
+      "exit_code": 0,
+      "binary_sha256": "070aa36ad8e1b690097cbd977b73d29dc31a2f20b43dd242d078d090b81fd61b"
+    },
+    {
+      "name": "rtx_lifecycle_tests",
+      "exit_code": 0,
+      "binary_sha256": "e6a6acdaeec89a826665c796045560269b0862477fa4c2b2cd0d6e735e553cc5"
+    },
+    {
+      "name": "rtx_posix_clock_fault_tests",
+      "exit_code": 0,
+      "binary_sha256": "ee35ef5aebfc69a6cc1b61a6119e73d2efc04e8f60a7b5491d55ebdb48ecbb24"
+    },
+    {
+      "name": "rtx_runner_ownership_tests",
+      "exit_code": 0,
+      "binary_sha256": "fdb47c4946d671e2d46fd185dccdc0deabcc9aefcf4ad049c2ec75833b94e624"
+    },
+    {
+      "name": "rtx_runtime_fault_tests",
+      "exit_code": 0,
+      "binary_sha256": "77dcdb57c9aa64ba1d4abd7110a6a8acfcbe81552f2983f4ad9c7af60b7e0c82"
+    },
+    {
+      "name": "rtx_shared_memory_tests",
+      "exit_code": 0,
+      "binary_sha256": "3d57f3f4ac9115ee45b7425ca92f9f20e1630a2093e7cc08e7f7eda0b1263309"
+    },
+    {
+      "name": "rtx_shm_setup_fault_tests",
+      "exit_code": 0,
+      "binary_sha256": "36bdafc59ee3092efc5b50839be338f42a85571dbdeab0a6511722444edf0f2c"
+    },
+    {
+      "name": "rtx_stop_latency_tests",
+      "exit_code": 0,
+      "binary_sha256": "dbc93b49feb3647c921b6ff04c4a322565fa0fa0ced7ae6bf97cfc9dc3fd314b"
+    },
+    {
+      "name": "rtx_stress_tests",
+      "exit_code": 0,
+      "binary_sha256": "77c400d355203c962c9119643517913dbad76285988a293b328128289325031a"
+    },
+    {
+      "name": "rtx_tasks_tests",
+      "exit_code": 0,
+      "binary_sha256": "bcce5c1cb27ebba06e622b5c8f7379d71aa99e567edbee65a785610bcf2ff98e"
+    },
+    {
+      "name": "rtx_tests",
+      "exit_code": 0,
+      "binary_sha256": "2d7764e4490c8f0f40514d4071218b2d2dd2be9f4c221ac1008710e1e127a429"
+    },
+    {
+      "name": "rtx_time_tests",
+      "exit_code": 0,
+      "binary_sha256": "2639be72b6545f144caf77210731c1a4ea267e6d7b19e1d5dabf7e2762c6b632"
+    },
+    {
+      "name": "rtx_watchdog_tests",
+      "exit_code": 0,
+      "binary_sha256": "bd8c18df0c7f9281da20d2771037448bf984fbe0ab0b97384c7e22a8caed1c89"
+    }
+  ],
+  "skipped": 0,
+  "fifo_evidence": "higher-priority FIFO callback preempted busy lower-priority callback on CPU 0",
+  "serial_log": "linux-vm-serial.log",
+  "limits": [
+    "emulated Linux scheduling behavior, not hardware timing",
+    "not a Yocto image",
+    "gRPC and installed-consumer tests excluded"
+  ]
+}

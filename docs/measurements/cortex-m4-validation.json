@@ -1,0 +1,195 @@
+{
+  "validated_utc": "2026-10-27T14:02:40.382142+00:00",
+  "kernel_commit": "0adc196d4bd52a2d91102b525b0aafc1e14a2386",
+  "compiler": "14.2.1",
+  "qemu": "QEMU emulator version 10.2.1 (Debian 1:10.2.1+ds-1ubuntu3.3)",
+  "machine": "mps2-an386",
+  "cpu": "cortex-m4",
+  "port": "GCC_ARM_CM4F",
+  "tick_width_bits": 64,
+  "tick_rate_hz": 1000,
+  "execution": "bare-metal FreeRTOS guest with ARM semihosting; no host OS in guest",
+  "tests": {
+    "Release": {
+      "result": "passed",
+      "elf_sha256": "02543e594174b92e30f8382a9d561b2d1360cd1dcefd7feac43e52899af51374",
+      "supervisor_stack": {
+        "reserved_words": 8192,
+        "minimum_free_words": 7812,
+        "observed_used_bytes": 1520,
+        "word_bytes": 4
+      },
+      "log": "cortex-m4-release-test.log",
+      "worker_stacks": [
+        {
+          "name": "preemption/low",
+          "minimum_free_words": 3978,
+          "reserved_words": 4096,
+          "word_bytes": 4,
+          "observed_used_bytes": 472
+        },
+        {
+          "name": "preemption/high",
+          "minimum_free_words": 3980,
+          "reserved_words": 4096,
+          "word_bytes": 4,
+          "observed_used_bytes": 464
+        },
+        {
+          "name": "watchdog/busy",
+          "minimum_free_words": 3777,
+          "reserved_words": 4096,
+          "word_bytes": 4,
+          "observed_used_bytes": 1276
+        },
+        {
+          "name": "runtime_fault/bad",
+          "minimum_free_words": 3806,
+          "reserved_words": 4096,
+          "word_bytes": 4,
+          "observed_used_bytes": 1160
+        },
+        {
+          "name": "runtime_fault/healthy",
+          "minimum_free_words": 3968,
+          "reserved_words": 4096,
+          "word_bytes": 4,
+          "observed_used_bytes": 512
+        },
+        {
+          "name": "exception_state/catch_low",
+          "minimum_free_words": 3818,
+          "reserved_words": 4096,
+          "word_bytes": 4,
+          "observed_used_bytes": 1112
+        },
+        {
+          "name": "exception_state/catch_high",
+          "minimum_free_words": 3818,
+          "reserved_words": 4096,
+          "word_bytes": 4,
+          "observed_used_bytes": 1112
+        }
+      ]
+    },
+    "Debug": {
+      "result": "passed",
+      "elf_sha256": "a0892ce720f28bebe2941a85ba52b82da493dc957469f2b9abc316dfea67f45a",
+      "supervisor_stack": {
+        "reserved_words": 8192,
+        "minimum_free_words": 7563,
+        "observed_used_bytes": 2516,
+        "word_bytes": 4
+      },
+      "log": "cortex-m4-debug-test.log",
+      "worker_stacks": [
+        {
+          "name": "preemption/low",
+          "minimum_free_words": 3836,
+          "reserved_words": 4096,
+          "word_bytes": 4,
+          "observed_used_bytes": 1040
+        },
+        {
+          "name": "preemption/high",
+          "minimum_free_words": 3842,
+          "reserved_words": 4096,
+          "word_bytes": 4,
+          "observed_used_bytes": 1016
+        },
+        {
+          "name": "watchdog/busy",
+          "minimum_free_words": 3722,
+          "reserved_words": 4096,
+          "word_bytes": 4,
+          "observed_used_bytes": 1496
+        },
+        {
+          "name": "runtime_fault/bad",
+          "minimum_free_words": 3734,
+          "reserved_words": 4096,
+          "word_bytes": 4,
+          "observed_used_bytes": 1448
+        },
+        {
+          "name": "runtime_fault/healthy",
+          "minimum_free_words": 3805,
+          "reserved_words": 4096,
+          "word_bytes": 4,
+          "observed_used_bytes": 1164
+        },
+        {
+          "name": "exception_state/catch_low",
+          "minimum_free_words": 3732,
+          "reserved_words": 4096,
+          "word_bytes": 4,
+          "observed_used_bytes": 1456
+        },
+        {
+          "name": "exception_state/catch_high",
+          "minimum_free_words": 3744,
+          "reserved_words": 4096,
+          "word_bytes": 4,
+          "observed_used_bytes": 1408
+        }
+      ]
+    }
+  },
+  "release_elf_sections_bytes": {
+    "text": 370498,
+    "data": 2016,
+    "bss": 5744
+  },
+  "stack_reservations_words": {
+    "each_node": 4096,
+    "supervisor": 8192,
+    "idle": 512
+  },
+  "static_map": {
+    "code_bytes": 4194304,
+    "ram_bytes": 4194304,
+    "initial_msp_reservation_bytes": 16384
+  },
+  "checks": [
+    "versioned launch parser with dependent configured before predecessor",
+    "priority preemption of non-yielding callback",
+    "heartbeats",
+    "stopped health and at least two ticks per node",
+    "watchdog faults busy callback before return",
+    "late heartbeat and secondary exception preserve first timeout",
+    "runtime exception isolates bad node while healthy node continues",
+    "independent caught exception state across task switches with both catch blocks active",
+    "portable task-local mailbox binary sequence/complement integrity during preemption",
+    "post-run native worker stack snapshots including launch-failure cleanup"
+  ],
+  "unverified": [
+    "physical board execution",
+    "worst-case timing",
+    "workload-specific worst-case resource budgets",
+    "hosted CI execution"
+  ],
+  "source_sha256": {
+    "targets/freertos-cortex-m4/task_runtime.h": "dcc93e157257ed56bef9aee05199c8ab5540ea84dd1ed52410879615cb9d896b",
+    "targets/freertos-cortex-m4/task_runtime.cpp": "ce96cc196dab334eddeb26d8daacb60263f7b94f8c03e0c29c6fa394e3c689b2",
+    "targets/freertos-cortex-m4/board.cpp": "61a62b593ef1cdfb67396cb9f7ce70f62ee76f9b55b3578e33e042301626d351",
+    "targets/freertos-cortex-m4/main.cpp": "3c45ab20a3010c05551739c33ce34b58819099b1eb7d25884d35ee62d798391d",
+    "targets/freertos-cortex-m4/FreeRTOSConfig.h": "4d8a6b87bdc37f58dd288368956c61ccc8f83f3558b51da812f16b1fbf803241",
+    "targets/freertos-cortex-m4/startup.S": "e67197f5504b34bd5cee558accaa2d61cf696fac8c48a37b8be6050c0cfcb198",
+    "targets/freertos-cortex-m4/mps2.ld": "c66f63617f86f699e9e2301187076cf9b60e80945794c0350a509fdc43f110b0",
+    "include/rtx/mailbox.hpp": "53767235237ae0f05dcbb1a30a39186c8d556b93e6ce9ec9395c7a1a2c423143",
+    "include/rtx/freertos.hpp": "1fcbb8451b8857c6b4dbd5c914a0edf406cb0c15c857a82192fcad0652156121",
+    "src/freertos.cpp": "8be1a51b903b65bfcfb7c56e9772ddd52df6874985939b65582a98f538a50126"
+  },
+  "exception_runtime": {
+    "default_runtime_regression": "failed: low task observed high task exception",
+    "fix": "GCC ARM EHABI globals stored in each kernel C-runtime TLS block",
+    "bytes_per_task": 12,
+    "new_heap_allocations": 0,
+    "tested_libstdcxx_major": 14,
+    "compile_guard_majors": [
+      13,
+      14
+    ],
+    "task_delete": "requires caught, uncaught and propagation state empty"
+  }
+}

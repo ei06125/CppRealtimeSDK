@@ -1,0 +1,35 @@
+UpdateCTestConfiguration  from :/Users/pedro/Training/cppTraining/CppRealtimeSDK-Codex/build-cortex-m4/DartConfiguration.tcl
+Parse Config file:/Users/pedro/Training/cppTraining/CppRealtimeSDK-Codex/build-cortex-m4/DartConfiguration.tcl
+Test project /Users/pedro/Training/cppTraining/CppRealtimeSDK-Codex/build-cortex-m4
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 1
+    Start 1: cortex_m4_execution
+
+1: Test command: /usr/bin/qemu-system-arm "-M" "mps2-an386" "-cpu" "cortex-m4" "-nographic" "-monitor" "none" "-serial" "none" "-semihosting-config" "enable=on,target=native" "-kernel" "/Users/pedro/Training/cppTraining/CppRealtimeSDK-Codex/build-cortex-m4/rtx_mps2"
+1: Working Directory: /Users/pedro/Training/cppTraining/CppRealtimeSDK-Codex/build-cortex-m4
+1: Test timeout computed to be: 20
+1: RTX Cortex-M4 starting
+1: PASS: Cortex-M4 launch parser, preemption, heartbeat and stop
+1: PASS: Cortex-M4 watchdog during busy callback and first-fault latch
+1: PASS: Cortex-M4 runtime callback fault isolation
+1: FAIL: task-local C++ exception state leaked into low task
+1/1 Test #1: cortex_m4_execution ..............***Failed  Error regular expression found in output. Regex=[FAIL:]  0.06 sec
+RTX Cortex-M4 starting
+PASS: Cortex-M4 launch parser, preemption, heartbeat and stop
+PASS: Cortex-M4 watchdog during busy callback and first-fault latch
+PASS: Cortex-M4 runtime callback fault isolation
+FAIL: task-local C++ exception state leaked into low task
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   0.06 sec
+
+The following tests FAILED:
+	  1 - cortex_m4_execution (Failed)
+Errors while running CTest

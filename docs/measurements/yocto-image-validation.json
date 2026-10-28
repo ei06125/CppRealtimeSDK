@@ -1,0 +1,32 @@
+{
+  "validated_utc": "2026-10-27T13:36:48.604264+00:00",
+  "poky_commit": "d0b46a6624ec9c61c47270745dd0b2d5abbe6ac1",
+  "image": "rtx-validation-image",
+  "metadata": {
+    "MACHINE": "qemuarm64",
+    "IMAGE_FEATURES": "allow-empty-password allow-root-login empty-root-password ssh-server-dropbear",
+    "IMAGE_INSTALL": "packagegroup-core-boot  rtx rtx-ptest ptest-runner",
+    "QB_SMP": "-smp 1",
+    "QB_MEM": "-m 1024",
+    "TEST_SUITES": "ping ssh rtx"
+  },
+  "testimage_task_defined": true,
+  "dry_run_summary": "NOTE: Tasks Summary: Attempted 4514 tasks of which 15 didn't need to be rerun and all succeeded.",
+  "validator_checks": {
+    "guest_derived_passes": 19,
+    "rejected": [
+      "skip",
+      "fail",
+      "missing",
+      "duplicate",
+      "empty installation"
+    ]
+  },
+  "runtime_test_sha256": "87985459a89f0c0ce970675ae32ec953a330dbc4a30abbaabf6f0f70f23d9995",
+  "unverified": [
+    "image compilation",
+    "package QA",
+    "image boot",
+    "OEQA target execution"
+  ]
+}

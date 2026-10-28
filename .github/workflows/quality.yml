@@ -1,0 +1,102 @@
+# Validate hosted builds, race/memory sanitizers, native FreeRTOS ports and Linux FIFO behavior.
+# Guest tests must actually pass privileged scheduling checks rather than accepting host skips.
+name: quality
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration: [full, shared, core, asan, tsan]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y cmake ninja-build g++ libgrpc++-dev libprotobuf-dev protobuf-compiler-grpc
+      - name: Configure
+        shell: bash
+        run: |
+          case "${{ matrix.configuration }}" in
+            full) flags=(-DRTX_GRPC=ON) ;;
+            shared) flags=(-DRTX_GRPC=ON -DBUILD_SHARED_LIBS=ON) ;;
+            core) flags=(-DRTX_POSIX=OFF -DRTX_GRPC=OFF) ;;
+            asan) flags=(-DRTX_GRPC=ON -DRTX_SANITIZE=ON) ;;
+            tsan) flags=(-DRTX_GRPC=OFF -DRTX_TSAN=ON -DRTX_EXAMPLES=OFF) ;;
+          esac
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug "${flags[@]}"
+      - name: Build
+        run: cmake --build build -j 2
+      - name: Test
+        shell: bash
+        run: |
+          if [[ "${{ matrix.configuration }}" == tsan ]]; then
+            ctest --test-dir build --output-on-failure -R 'rtx_(mailbox|dispatch_allocation|runner_ownership|launch_watchdog|stop_latency|runtime_fault|lifecycle|tasks|watchdog|stress|posix_clock_fault)_tests'
+          else
+            ctest --test-dir build --output-on-failure
+          fi
+  freertos:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch pinned FreeRTOS kernel
+        shell: bash
+        run: |
+          git init /tmp/rtx-freertos-kernel
+          git -C /tmp/rtx-freertos-kernel remote add origin https://github.com/FreeRTOS/FreeRTOS-Kernel.git
+          git -C /tmp/rtx-freertos-kernel fetch --depth 1 origin 0adc196d4bd52a2d91102b525b0aafc1e14a2386
+          git -C /tmp/rtx-freertos-kernel checkout --detach FETCH_HEAD
+      - name: Build simulator
+        run: |
+          cmake -S targets/freertos-sim -B build-freertos -DCMAKE_BUILD_TYPE=Release -DFREERTOS_KERNEL_PATH=/tmp/rtx-freertos-kernel
+          cmake --build build-freertos -j 2
+      - name: Test kernel integration
+        run: ctest --test-dir build-freertos --output-on-failure
+      - name: Install Cortex-M reference toolchain
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends gcc-arm-none-eabi libstdc++-arm-none-eabi-newlib qemu-system-arm
+      - name: Build and test Cortex-M4 interrupt port
+        shell: bash
+        run: |
+          for configuration in Debug Release; do
+            cmake -S targets/freertos-cortex-m4 -B "build-cortex-$configuration" -G Ninja \
+              -DCMAKE_TOOLCHAIN_FILE="$GITHUB_WORKSPACE/cmake/toolchains/arm-cortex-m4.cmake" \
+              -DCMAKE_BUILD_TYPE="$configuration" -DFREERTOS_KERNEL_PATH=/tmp/rtx-freertos-kernel
+            cmake --build "build-cortex-$configuration" -j 2
+            ctest --test-dir "build-cortex-$configuration" --output-on-failure
+          done
+  linux-guest:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build and VM dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends cmake ninja-build g++ qemu-system-arm busybox-static zstd libgrpc++-dev libprotobuf-dev protobuf-compiler-grpc
+      - name: Download guest kernel
+        shell: bash
+        run: |
+          rtx_kernel_package=$(apt-cache depends linux-image-virtual | awk '$1 == "Depends:" && $2 ~ /^linux-image-[0-9]/ {print $2; exit}')
+          test -n "$rtx_kernel_package"
+          mkdir -p "$RUNNER_TEMP/rtx-kernel"
+          cd "$RUNNER_TEMP/rtx-kernel"
+          apt-get download "$rtx_kernel_package"
+          for package in ./*.deb; do dpkg-deb -x "$package" extracted; done
+      - name: Build shared libraries and behavior tests
+        run: |
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DRTX_GRPC=ON -DRTX_EXAMPLES=OFF
+          cmake --build build -j 2
+      - name: Test in single-CPU guest with FIFO permission
+        shell: bash
+        run: |
+          rtx_kernel=$(find "$RUNNER_TEMP/rtx-kernel/extracted/boot" -name 'vmlinuz-*' -type f -print -quit)
+          test -n "$rtx_kernel"
+          python3 tools/linux_vm_tests.py --kernel "$rtx_kernel" --log linux-guest.log build/rtx_*tests
+      - name: Preserve guest serial log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-guest-serial-log
+          path: linux-guest.log
+          if-no-files-found: ignore

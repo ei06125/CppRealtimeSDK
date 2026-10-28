@@ -1,0 +1,30 @@
+// Wire contract for scheduler management and explicitly registered binary channels.
+// Preserve existing field numbers when evolving the protocol for deployed clients.
+syntax = "proto3";
+package rtx.rpc;
+service Control {
+ rpc GetHealth(Empty) returns (HealthReport);
+ rpc Stop(Empty) returns (Empty);
+}
+message Empty {}
+message NodeHealth {
+ string name = 1;
+ string state = 2;
+ uint64 ticks = 3;
+ uint64 deadline_misses = 4;
+ uint64 skipped_releases = 5;
+ int64 heartbeat_ns = 6;
+ string fault = 7;
+}
+message HealthReport { repeated NodeHealth nodes = 1; }
+
+// Explicitly registered application channels; payload schemas belong to applications.
+service Mailbox {
+ rpc Read(Channel) returns (Payload);
+ rpc Write(Payload) returns (Empty);
+}
+message Channel { string name = 1; }
+message Payload {
+ string channel = 1;
+ bytes data = 2;
+}

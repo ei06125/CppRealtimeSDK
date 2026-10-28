@@ -1,0 +1,53 @@
+{
+  "poky_commit": "d0b46a6624ec9c61c47270745dd0b2d5abbe6ac1",
+  "machine": "qemuarm64",
+  "grpc": true,
+  "ptest_enabled": true,
+  "metadata": {
+    "BUILD_TESTING": "ON",
+    "package": "rtx-ptest",
+    "executables": 18
+  },
+  "dry_run": {
+    "result": "success",
+    "summary": "NOTE: Tasks Summary: Attempted 1284 tasks of which 15 didn't need to be rerun and all succeeded."
+  },
+  "native_shared_runner": {
+    "passed": 17,
+    "skipped": 1,
+    "failed": 0,
+    "skip_reason": "SCHED_FIFO permission unavailable"
+  },
+  "runner_error_handling": [
+    "empty install fails",
+    "exit 1 reports FAIL",
+    "exit 77 reports SKIP",
+    "exit 0 reports PASS"
+  ],
+  "actual_build": {
+    "result": "failed before RTX compilation",
+    "attempted_tasks": 23,
+    "failed_tasks": 8,
+    "reason": "BB_NO_NETWORK=1 and missing dependency sources"
+  },
+  "unverified": [
+    "Yocto target compilation",
+    "package QA",
+    "target image ptest execution"
+  ],
+  "online_core_build": {
+    "network_enabled": true,
+    "grpc": false,
+    "ptest": false,
+    "result": "failed before RTX compilation",
+    "attempted_tasks": 12,
+    "failed_tasks": 4,
+    "reason": "dependency fetch failures; direct ftp.gnu.org request returned HTTP 403 Approval required",
+    "failed_dependencies": [
+      "quilt-native",
+      "m4-native",
+      "gettext-minimal-native",
+      "gnu-config-native"
+    ]
+  }
+}

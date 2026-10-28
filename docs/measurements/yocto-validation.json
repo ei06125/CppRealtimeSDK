@@ -1,0 +1,33 @@
+{
+  "poky_branch": "walnascar",
+  "poky_commit": "d0b46a6624ec9c61c47270745dd0b2d5abbe6ac1",
+  "host": "Linux-7.0.14-aarch64-with-glibc2.43",
+  "recipe_parse": {
+    "recipes": 924,
+    "errors": 0
+  },
+  "dry_run": {
+    "tasks": 842,
+    "result": "success",
+    "network_disabled": true
+  },
+  "warnings": [
+    "WARNING: Host distribution \"ubuntu-26.04\" has not been validated with this version of the build system; you may possibly experience unexpected failures. It is recommended that you use a tested distribution.",
+    "WARNING: Disabling uninative as unable to fetch uninative tarball: Network access disabled through BB_NO_NETWORK (or set indirectly due to use of BB_FETCH_PREMIRRORONLY) but access requested with command /usr/bin/env wget --tries=2 --timeout=100 --output-document=/tmp/rtx-yocto-build/downloads/uninative/812045d826b7fda88944055e8526b95a5a9440bfef608d5b53fd52faab49bf85/aarch64-nativesdk-libc-4.9.tar.xz.tmp --continue --directory-prefix=/tmp/rtx-yocto-build/downloads/uninative/812045d826b7fda88944055e8526b95a5a9440bfef608d5b53fd52faab49bf85 'http://downloads.yoctoproject.org/releases/uninative/4.9/aarch64-nativesdk-libc-4.9.tar.xz' (for url http://downloads.yoctoproject.org/releases/uninative/4.9/aarch64-nativesdk-libc-4.9.tar.xz;sha256sum=812045d826b7fda88944055e8526b95a5a9440bfef608d5b53fd52faab49bf85)",
+    "WARNING: To build your own uninative loader, please bitbake uninative-tarball and set UNINATIVE_TARBALL appropriately."
+  ],
+  "evaluated_recipe": {
+    "PN": "rtx",
+    "MACHINE": "qemuarm64",
+    "EXTERNALSRC": "/Users/pedro/Training/cppTraining/CppRealtimeSDK-Codex",
+    "EXTERNALSRC_BUILD": "/tmp/rtx-yocto-build/tmp/work/cortexa57-poky-linux/rtx/0.1.0/build",
+    "EXTRA_OECMAKE": "      -DBUILD_SHARED_LIBS=ON     -DBUILD_TESTING=OFF     -DRTX_EXAMPLES=OFF     -DRTX_POSIX=ON     -DRTX_PROTOC_EXECUTABLE=/tmp/rtx-yocto-build/tmp/work/cortexa57-poky-linux/rtx/0.1.0/recipe-sysroot-native/usr/bin/protoc     -DRTX_GRPC_PLUGIN_EXECUTABLE=/tmp/rtx-yocto-build/tmp/work/cortexa57-poky-linux/rtx/0.1.0/recipe-sysroot-native/usr/bin/grpc_cpp_plugin   -DRTX_GRPC=OFF",
+    "PACKAGECONFIG": ""
+  },
+  "unverified": [
+    "target compilation",
+    "package QA execution",
+    "Yocto image boot"
+  ],
+  "grpc_enabled_validation": "yocto-grpc-validation.json"
+}

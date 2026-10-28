@@ -1,0 +1,5 @@
+rtx-launch 1
+# Single-node application-data pipeline consumed by the gRPC/shared-memory example.
+# The transform callback is supplied by the executable, not by this configuration file.
+# XOR each input byte with 0x55 and publish the result to the output mailbox.
+node transform transform 10 1000000 10000000 1000000000

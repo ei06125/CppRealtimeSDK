@@ -1,0 +1,34 @@
+UpdateCTestConfiguration  from :/Users/pedro/Training/cppTraining/CppRealtimeSDK-Codex/build-cortex-m4-debug/DartConfiguration.tcl
+Parse Config file:/Users/pedro/Training/cppTraining/CppRealtimeSDK-Codex/build-cortex-m4-debug/DartConfiguration.tcl
+Test project /Users/pedro/Training/cppTraining/CppRealtimeSDK-Codex/build-cortex-m4-debug
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 1
+    Start 1: cortex_m4_execution
+
+1: Test command: /usr/bin/qemu-system-arm "-M" "mps2-an386" "-cpu" "cortex-m4" "-nographic" "-monitor" "none" "-serial" "none" "-semihosting-config" "enable=on,target=native" "-kernel" "/Users/pedro/Training/cppTraining/CppRealtimeSDK-Codex/build-cortex-m4-debug/rtx_mps2"
+1: Working Directory: /Users/pedro/Training/cppTraining/CppRealtimeSDK-Codex/build-cortex-m4-debug
+1: Test timeout computed to be: 20
+1: RTX Cortex-M4 starting
+1: STACK preemption/low minimum_free_words=3836 reserved_words=4096 word_bytes=4
+1: STACK preemption/high minimum_free_words=3842 reserved_words=4096 word_bytes=4
+1: PASS: Cortex-M4 launch parser, preemption, heartbeat and stop
+1: STACK watchdog/busy minimum_free_words=3722 reserved_words=4096 word_bytes=4
+1: PASS: Cortex-M4 watchdog during busy callback and first-fault latch
+1: STACK runtime_fault/bad minimum_free_words=3734 reserved_words=4096 word_bytes=4
+1: STACK runtime_fault/healthy minimum_free_words=3805 reserved_words=4096 word_bytes=4
+1: PASS: Cortex-M4 runtime callback fault isolation
+1: STACK exception_state/catch_low minimum_free_words=3732 reserved_words=4096 word_bytes=4
+1: STACK exception_state/catch_high minimum_free_words=3744 reserved_words=4096 word_bytes=4
+1: PASS: Cortex-M4 task-local caught exception state across task switches
+1: STACK supervisor minimum_free_words=7563 reserved_words=8192 word_bytes=4
+1: PASS: Cortex-M4 full execution suite
+1/1 Test #1: cortex_m4_execution ..............   Passed    0.09 sec
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.09 sec

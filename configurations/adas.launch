@@ -1,0 +1,6 @@
+rtx-launch 1
+# Capture launches before perception; all duration fields below are integer nanoseconds.
+# Callback identifiers resolve through the ADAS example registry.
+# node NAME CALLBACK PRIORITY PERIOD_NS DEADLINE_NS WATCHDOG_NS [DEPENDENCY ...]
+node camera capture 20 10000000 8000000 100000000
+node perception infer 10 20000000 15000000 100000000 camera

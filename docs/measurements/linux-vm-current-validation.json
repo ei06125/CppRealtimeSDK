@@ -1,0 +1,195 @@
+{
+  "measured_utc": "2026-10-27T14:07:38.771350+00:00",
+  "guest": "Ubuntu ARM64 generic Linux 7.0.0-38.38",
+  "kernel_sha256": "03e825cd257ae2e376e9cac06ab1372e9e5a67a7ca27b13100c9c51efcb2f7ef",
+  "qemu": "QEMU emulator version 10.2.1 (Debian 1:10.2.1+ds-1ubuntu3.3)",
+  "machine": "virt",
+  "cpu": "cortex-a72",
+  "vcpus": 1,
+  "memory_mib": 512,
+  "build_type": "Release shared",
+  "grpc": true,
+  "guest_root": true,
+  "tests": [
+    {
+      "name": "rtx_control_tests",
+      "exit_code": 0,
+      "binary_sha256": "4c8f7e869606b576f711390051affda8aa7ea2e38087596ac7035c41f6a0fdc5"
+    },
+    {
+      "name": "rtx_dispatch_allocation_tests",
+      "exit_code": 0,
+      "binary_sha256": "4e770bb972c6119de463f960eedf23ebb8a71dca6c121c4e6d67a4114c9b3548"
+    },
+    {
+      "name": "rtx_fault_tests",
+      "exit_code": 0,
+      "binary_sha256": "7221dce409f46fd5e457e976ecc03faa81543fa955dc27ae91514f48235973cc"
+    },
+    {
+      "name": "rtx_fifo_tests",
+      "exit_code": 0,
+      "binary_sha256": "4be98d227e50612b52d968d4e47e9a1f98960a407dc6c7416da955f3d49aca3b"
+    },
+    {
+      "name": "rtx_launch_tests",
+      "exit_code": 0,
+      "binary_sha256": "7215fefbf31e045e95c00a999373fcc8354cb9889b81066a65fe77d8f2f8330c"
+    },
+    {
+      "name": "rtx_launch_watchdog_tests",
+      "exit_code": 0,
+      "binary_sha256": "aac64eeff83647bc48aebd0d5c017541fbea398c98b5fba2df30a214dec039a9"
+    },
+    {
+      "name": "rtx_lifecycle_tests",
+      "exit_code": 0,
+      "binary_sha256": "a0d5660665b6603fb8c69feae674b72325ec402e5b6d3c8e2376c98cd09b5e73"
+    },
+    {
+      "name": "rtx_mailbox_tests",
+      "exit_code": 0,
+      "binary_sha256": "14e40af306551252ad587611f692c124f7257699a9281ffbdf5d838f43248ff5"
+    },
+    {
+      "name": "rtx_pipeline_tests",
+      "exit_code": 0,
+      "binary_sha256": "bcd0f079eb8f6b1b61e6cf4b844886dff4bb420c1c291c4128dd5c14ebe28d40"
+    },
+    {
+      "name": "rtx_posix_clock_fault_tests",
+      "exit_code": 0,
+      "binary_sha256": "2d009a234e45ef43dc5ba25e701e9fd63c7fad092d5ea183b456127cd1a94310"
+    },
+    {
+      "name": "rtx_runner_ownership_tests",
+      "exit_code": 0,
+      "binary_sha256": "e4e2e286559f2e9126772397ea9cd425e58a970d9d56716ed48311c0fc3f8302"
+    },
+    {
+      "name": "rtx_runtime_fault_tests",
+      "exit_code": 0,
+      "binary_sha256": "85eabde047f26be5a30e537fd4c686e6519a9840a52e957d34f23c0f2c3a4501"
+    },
+    {
+      "name": "rtx_shared_memory_tests",
+      "exit_code": 0,
+      "binary_sha256": "11d89dc4de074fcfcfc492661093a86a8ab8436d36e2156129d16cba448715ca"
+    },
+    {
+      "name": "rtx_shm_setup_fault_tests",
+      "exit_code": 0,
+      "binary_sha256": "261c8025835165a2e228c52b6f0025c365e6704f85e35eae7335c5b1ebac8379"
+    },
+    {
+      "name": "rtx_stop_latency_tests",
+      "exit_code": 0,
+      "binary_sha256": "4fa4d1ff8332d09514018dcbf80b04abe2c920cd81b3be710e8e2c25cbb7a223"
+    },
+    {
+      "name": "rtx_stress_tests",
+      "exit_code": 0,
+      "binary_sha256": "33c0cbcad38ba2c49b55d6ece639df29308040d6b21a4c7a0a63b97bede18a4f"
+    },
+    {
+      "name": "rtx_tasks_tests",
+      "exit_code": 0,
+      "binary_sha256": "1c4ffed8da68b6c3fadb0b783e3d2be857f70821667525a6addf6777a61e2237"
+    },
+    {
+      "name": "rtx_tests",
+      "exit_code": 0,
+      "binary_sha256": "22177dc23a628f3e70c070ef951042af51b52f0fe04fc245eb645992acc79d94"
+    },
+    {
+      "name": "rtx_time_tests",
+      "exit_code": 0,
+      "binary_sha256": "260f20b87463f239d7a9bf7708fce3bf1f815c95323f425922bd187c230b79a2"
+    },
+    {
+      "name": "rtx_watchdog_tests",
+      "exit_code": 0,
+      "binary_sha256": "ac3fb54c112c7ba0967858219d003b8153697390bc972929b4deca6ffeb3481a"
+    }
+  ],
+  "skipped": 0,
+  "fifo_evidence": "higher-priority FIFO callback preempted busy lower-priority callback on CPU 0",
+  "serial_log": "linux-vm-current-serial.log",
+  "limits": [
+    "emulated Linux scheduling behavior, not hardware timing",
+    "not a Yocto image",
+    "installed-consumer test excluded",
+    "hosted CI job defined but not executed"
+  ],
+  "runner_sha256": "24568fdd646c298bfd0c334f1a599666690bfe75a5bc4efc857125828f4039de",
+  "runner_negative_check": "guest exit 77 rejected as failure",
+  "fifo_supervisor": {
+    "policy": "SCHED_FIFO",
+    "priority": "max(node priority)+1",
+    "startup": "all policies configured before callback launch",
+    "poll_resolution_ns": 1000000,
+    "watchdog_ns": 3000000,
+    "busy_launch_callback_ns": 40000000,
+    "result": "callback observed heartbeat timeout before yielding or returning"
+  },
+  "source_sha256": {
+    "include/rtx/runtime_mutex.hpp": "c9f75d5454a6428ca0c988742eb6093992114473e3fb4f6152c1a84794d97ee2",
+    "include/rtx/scheduler.hpp": "9428b97225135c9dedd0bc6702f9f9cb81c75b11cb6ac59d57ec138e6dfc133d",
+    "src/scheduler.cpp": "8a18c7f561b75068a889a1d3bbb35bda967236a665c34b6b662f1e6f9f86b7a3",
+    "src/posix_tasks.cpp": "44d1aacd07df1ede77de4fc504e6dc2a0fab891ecda85ebd3b413ebcfb519df3",
+    "tests/fifo_test.cpp": "e83c12dc916e26abb1aef61ee1c20249d7709eba0761c42bf418eab25aed0250",
+    "tests/fault_test.cpp": "e1d1e1a1868040514bdd53339cfa853c3db11dccda6913941bece21133115010",
+    "include/rtx/mailbox.hpp": "53767235237ae0f05dcbb1a30a39186c8d556b93e6ce9ec9395c7a1a2c423143",
+    "tests/mailbox_test.cpp": "ec15a240ce481bddb63b9b8a963e3e3796fd881ae5391990f7f1ce50c3bf8c98",
+    "include/rtx/posix.hpp": "27351101118dfff0948e412d655b89277afc6fb844a5678a0284a845022f7c3c",
+    "include/rtx/posix_sync.hpp": "fd54f84acfc9c08ac614dad0228bcf2d4af1f4349b6cc353f28bc7fd9de3ae5f",
+    "src/posix_sync.cpp": "0c8a17a2946c2217d027be43334b197855f6f658e94a1db7043a2548a184cd19",
+    "tests/stop_latency_test.cpp": "97bd130dc006659c7e57a03854fd8ca1b6fcabf956e6564116646e0174aee1e2"
+  },
+  "priority_inheritance": {
+    "priorities": [
+      10,
+      20,
+      30
+    ],
+    "vcpus": 1,
+    "plain_mutex_control": "medium spinner reached its bound before low owner could release",
+    "RuntimeMutex": "low owner released before medium spinner bound",
+    "spin_bound_ns": 100000000,
+    "high_waiter_delay_ns": 5000000
+  },
+  "configuration_order_regression": {
+    "launch_sequence": [
+      "independent",
+      "root",
+      "dependent"
+    ],
+    "equal_priority_release_sequence": [
+      "dependent",
+      "independent",
+      "root"
+    ],
+    "before_fix": "regression failed: release sequence followed launch order",
+    "after_fix": "passed"
+  },
+  "portable_mailbox": {
+    "capacity_bytes": 16,
+    "writes": 10000,
+    "concurrent_readers": 2,
+    "dispatch_allocation_test": "normal mailbox operations included; zero ordinary operator-new calls"
+  },
+  "runner_gate_protocol": {
+    "mutex": "PTHREAD_PRIO_INHERIT",
+    "condition_clock": "CLOCK_MONOTONIC",
+    "checked_wait_deadlines": true,
+    "stop_wait_regressions": [
+      "immediate predicate",
+      "zero timeout",
+      "no early timeout",
+      "mutex ownership",
+      "overflow rejection",
+      "unowned wait rejection",
+      "interrupt five-second idle"
+    ]
+  }
+}

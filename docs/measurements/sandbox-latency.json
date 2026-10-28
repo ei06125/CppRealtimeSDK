@@ -1,0 +1,59 @@
+{
+  "measured_utc": "2026-10-27T12:38:31.864189+00:00",
+  "environment": "Linux sandbox, ordinary OS scheduling, unloaded single probe node",
+  "kernel": "7.0.14",
+  "build_type": "Release",
+  "compiler": "15.2.0",
+  "reports": [
+    {
+      "mode": "cooperative",
+      "architecture": "aarch64",
+      "samples": 1000,
+      "period_ns": 1000000,
+      "poll_resolution_ns": 100000,
+      "clock_resolution_ns": 1,
+      "elapsed_ns": 999208958,
+      "release_lateness_ns": {
+        "min": 4542,
+        "p50": 75417,
+        "p95": 82584,
+        "p99": 89250,
+        "max": 153292
+      },
+      "absolute_interval_jitter_ns": {
+        "min": 0,
+        "p50": 2459,
+        "p95": 16209,
+        "p99": 52042,
+        "max": 77542
+      },
+      "deadline_misses": 0,
+      "skipped_releases": 0
+    },
+    {
+      "mode": "workers",
+      "architecture": "aarch64",
+      "samples": 1000,
+      "period_ns": 1000000,
+      "poll_resolution_ns": 100000,
+      "clock_resolution_ns": 1,
+      "elapsed_ns": 999239834,
+      "release_lateness_ns": {
+        "min": 334,
+        "p50": 91834,
+        "p95": 185667,
+        "p99": 193459,
+        "max": 239375
+      },
+      "absolute_interval_jitter_ns": {
+        "min": 0,
+        "p50": 30541,
+        "p95": 156667,
+        "p99": 175125,
+        "max": 192875
+      },
+      "deadline_misses": 0,
+      "skipped_releases": 0
+    }
+  ]
+}

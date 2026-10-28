@@ -1,0 +1,23 @@
+#!/bin/sh
+# Run installed behavior executables using standard ptest result records.
+# A FIFO privilege skip remains visible, and missing executables must not look like a successful run.
+# ptest output format; exit 77 means the FIFO scheduling privilege is absent.
+cd "$(dirname "$0")" || exit 1
+failed=0
+found=0
+for test in ./rtx_*tests; do
+    [ -x "$test" ] || continue
+    found=1
+    "$test"
+    result=$?
+    case "$result" in
+        0) echo "PASS: ${test#./}" ;;
+        77) echo "SKIP: ${test#./}" ;;
+        *) echo "FAIL: ${test#./} (exit $result)"; failed=1 ;;
+    esac
+done
+if [ "$found" = 0 ]; then
+    echo "FAIL: no RTX test executables installed"
+    exit 1
+fi
+exit "$failed"
