@@ -1,0 +1,4 @@
+# Builds use a mounted checkout, not copied host outputs or Git metadata.
+.git
+**/build*
+**/__pycache__

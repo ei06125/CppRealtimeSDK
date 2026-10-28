@@ -1,0 +1,98 @@
+{
+  "version": 4,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 23,
+    "patch": 0
+  },
+  "include": [
+    "../../cmake/presets/configurations.json"
+  ],
+  "configurePresets": [
+    {
+      "name": "cortex-m4-debug",
+      "displayName": "cortex-m4: Debug",
+      "inherits": "debug",
+      "condition": {
+        "type": "const",
+        "value": true
+      },
+      "toolchainFile": "${sourceDir}/../../cmake/toolchains/arm-cortex-m4.cmake",
+      "cacheVariables": {
+        "FREERTOS_KERNEL_PATH": "$env{FREERTOS_KERNEL_PATH}"
+      }
+    },
+    {
+      "name": "cortex-m4-development",
+      "displayName": "cortex-m4: Development",
+      "inherits": "development",
+      "condition": {
+        "type": "const",
+        "value": true
+      },
+      "toolchainFile": "${sourceDir}/../../cmake/toolchains/arm-cortex-m4.cmake",
+      "cacheVariables": {
+        "FREERTOS_KERNEL_PATH": "$env{FREERTOS_KERNEL_PATH}"
+      }
+    },
+    {
+      "name": "cortex-m4-release",
+      "displayName": "cortex-m4: Release",
+      "inherits": "release",
+      "condition": {
+        "type": "const",
+        "value": true
+      },
+      "toolchainFile": "${sourceDir}/../../cmake/toolchains/arm-cortex-m4.cmake",
+      "cacheVariables": {
+        "FREERTOS_KERNEL_PATH": "$env{FREERTOS_KERNEL_PATH}"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "cortex-m4-debug",
+      "configurePreset": "cortex-m4-debug"
+    },
+    {
+      "name": "cortex-m4-development",
+      "configurePreset": "cortex-m4-development"
+    },
+    {
+      "name": "cortex-m4-release",
+      "configurePreset": "cortex-m4-release"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "cortex-m4-debug",
+      "configurePreset": "cortex-m4-debug",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error"
+      }
+    },
+    {
+      "name": "cortex-m4-development",
+      "configurePreset": "cortex-m4-development",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error"
+      }
+    },
+    {
+      "name": "cortex-m4-release",
+      "configurePreset": "cortex-m4-release",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error"
+      }
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "version": 4,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 23,
+    "patch": 0
+  },
+  "include": [
+    "../../cmake/presets/configurations.json"
+  ],
+  "configurePresets": [
+    {
+      "name": "freertos-sim-debug",
+      "displayName": "freertos-sim: Debug",
+      "inherits": "debug",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "cacheVariables": {
+        "FREERTOS_KERNEL_PATH": "$env{FREERTOS_KERNEL_PATH}"
+      }
+    },
+    {
+      "name": "freertos-sim-development",
+      "displayName": "freertos-sim: Development",
+      "inherits": "development",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "cacheVariables": {
+        "FREERTOS_KERNEL_PATH": "$env{FREERTOS_KERNEL_PATH}"
+      }
+    },
+    {
+      "name": "freertos-sim-release",
+      "displayName": "freertos-sim: Release",
+      "inherits": "release",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "cacheVariables": {
+        "FREERTOS_KERNEL_PATH": "$env{FREERTOS_KERNEL_PATH}"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "freertos-sim-debug",
+      "configurePreset": "freertos-sim-debug"
+    },
+    {
+      "name": "freertos-sim-development",
+      "configurePreset": "freertos-sim-development"
+    },
+    {
+      "name": "freertos-sim-release",
+      "configurePreset": "freertos-sim-release"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "freertos-sim-debug",
+      "configurePreset": "freertos-sim-debug",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error"
+      }
+    },
+    {
+      "name": "freertos-sim-development",
+      "configurePreset": "freertos-sim-development",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error"
+      }
+    },
+    {
+      "name": "freertos-sim-release",
+      "configurePreset": "freertos-sim-release",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error"
+      }
+    }
+  ]
+}

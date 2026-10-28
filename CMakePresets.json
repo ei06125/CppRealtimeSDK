@@ -1,0 +1,269 @@
+{
+  "version": 4,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 23,
+    "patch": 0
+  },
+  "include": [
+    "cmake/presets/configurations.json"
+  ],
+  "configurePresets": [
+    {
+      "name": "linux-debug",
+      "displayName": "linux: Debug",
+      "inherits": "debug",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "cacheVariables": {
+        "RTX_POSIX": true,
+        "RTX_GRPC": false
+      }
+    },
+    {
+      "name": "linux-development",
+      "displayName": "linux: Development",
+      "inherits": "development",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "cacheVariables": {
+        "RTX_POSIX": true,
+        "RTX_GRPC": false
+      }
+    },
+    {
+      "name": "linux-release",
+      "displayName": "linux: Release",
+      "inherits": "release",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "cacheVariables": {
+        "RTX_POSIX": true,
+        "RTX_GRPC": false
+      }
+    },
+    {
+      "name": "macos-debug",
+      "displayName": "macos: Debug",
+      "inherits": "debug",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      },
+      "cacheVariables": {
+        "RTX_POSIX": false,
+        "RTX_GRPC": false
+      }
+    },
+    {
+      "name": "macos-development",
+      "displayName": "macos: Development",
+      "inherits": "development",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      },
+      "cacheVariables": {
+        "RTX_POSIX": false,
+        "RTX_GRPC": false
+      }
+    },
+    {
+      "name": "macos-release",
+      "displayName": "macos: Release",
+      "inherits": "release",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      },
+      "cacheVariables": {
+        "RTX_POSIX": false,
+        "RTX_GRPC": false
+      }
+    },
+    {
+      "name": "windows-debug",
+      "displayName": "windows: Debug",
+      "inherits": "debug",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "cacheVariables": {
+        "RTX_POSIX": false,
+        "RTX_GRPC": false
+      }
+    },
+    {
+      "name": "windows-development",
+      "displayName": "windows: Development",
+      "inherits": "development",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "cacheVariables": {
+        "RTX_POSIX": false,
+        "RTX_GRPC": false
+      }
+    },
+    {
+      "name": "windows-release",
+      "displayName": "windows: Release",
+      "inherits": "release",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "cacheVariables": {
+        "RTX_POSIX": false,
+        "RTX_GRPC": false
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "linux-debug",
+      "configurePreset": "linux-debug"
+    },
+    {
+      "name": "linux-development",
+      "configurePreset": "linux-development"
+    },
+    {
+      "name": "linux-release",
+      "configurePreset": "linux-release"
+    },
+    {
+      "name": "macos-debug",
+      "configurePreset": "macos-debug"
+    },
+    {
+      "name": "macos-development",
+      "configurePreset": "macos-development"
+    },
+    {
+      "name": "macos-release",
+      "configurePreset": "macos-release"
+    },
+    {
+      "name": "windows-debug",
+      "configurePreset": "windows-debug"
+    },
+    {
+      "name": "windows-development",
+      "configurePreset": "windows-development"
+    },
+    {
+      "name": "windows-release",
+      "configurePreset": "windows-release"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "linux-debug",
+      "configurePreset": "linux-debug",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error"
+      }
+    },
+    {
+      "name": "linux-development",
+      "configurePreset": "linux-development",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error"
+      }
+    },
+    {
+      "name": "linux-release",
+      "configurePreset": "linux-release",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error"
+      }
+    },
+    {
+      "name": "macos-debug",
+      "configurePreset": "macos-debug",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error"
+      }
+    },
+    {
+      "name": "macos-development",
+      "configurePreset": "macos-development",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error"
+      }
+    },
+    {
+      "name": "macos-release",
+      "configurePreset": "macos-release",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error"
+      }
+    },
+    {
+      "name": "windows-debug",
+      "configurePreset": "windows-debug",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error"
+      }
+    },
+    {
+      "name": "windows-development",
+      "configurePreset": "windows-development",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error"
+      }
+    },
+    {
+      "name": "windows-release",
+      "configurePreset": "windows-release",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error"
+      }
+    }
+  ]
+}

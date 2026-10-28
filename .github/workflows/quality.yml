@@ -5,6 +5,32 @@ on: [push, pull_request, workflow_dispatch]
 permissions:
   contents: read
 jobs:
+  presets:
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - { os: ubuntu-24.04, prefix: linux }
+          - { os: macos-14, prefix: macos }
+          - { os: windows-2022, prefix: windows }
+        configuration: [debug, development, release]
+    runs-on: ${{ matrix.platform.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Linux tools
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y ninja-build
+      - name: Install macOS tools
+        if: runner.os == 'macOS'
+        run: brew install ninja
+      - uses: ilammy/msvc-dev-cmd@v1
+        if: runner.os == 'Windows'
+      - name: Configure preset
+        run: cmake --preset ${{ matrix.platform.prefix }}-${{ matrix.configuration }}
+      - name: Build preset
+        run: cmake --build --preset ${{ matrix.platform.prefix }}-${{ matrix.configuration }} --parallel 2
+      - name: Test preset
+        run: ctest --preset ${{ matrix.platform.prefix }}-${{ matrix.configuration }}
   format:
     runs-on: ubuntu-24.04
     steps:
@@ -66,7 +92,7 @@ jobs:
       - name: Build and test Cortex-M4 interrupt port
         shell: bash
         run: |
-          for configuration in Debug Release; do
+          for configuration in Debug RelWithDebInfo Release; do
             cmake -S targets/freertos-cortex-m4 -B "build-cortex-$configuration" -G Ninja \
               -DCMAKE_TOOLCHAIN_FILE="$GITHUB_WORKSPACE/cmake/toolchains/arm-cortex-m4.cmake" \
               -DCMAKE_BUILD_TYPE="$configuration" -DFREERTOS_KERNEL_PATH=/tmp/rtx-freertos-kernel

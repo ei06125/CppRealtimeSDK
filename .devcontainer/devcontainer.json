@@ -1,0 +1,15 @@
+{
+  "name": "RTX Linux development",
+  "build": {
+    "dockerfile": "../Dockerfile",
+    "context": "..",
+    "args": { "RTX_EMBEDDED": "0" }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-vscode.cpptools", "ms-vscode.cmake-tools"],
+      "settings": { "cmake.useCMakePresets": "always" }
+    }
+  },
+  "postCreateCommand": "cmake --list-presets"
+}

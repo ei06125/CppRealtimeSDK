@@ -4,3 +4,6 @@ build*/
 # Python bytecode is regenerated locally.
 __pycache__/
 *.py[cod]
+
+# Machine-local preset overrides may contain SDK paths.
+CMakeUserPresets.json

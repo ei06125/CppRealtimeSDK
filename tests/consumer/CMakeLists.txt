@@ -13,3 +13,7 @@ if(TARGET rtx::grpc)
  target_link_libraries(consumer PRIVATE rtx::grpc)
  target_compile_definitions(consumer PRIVATE HAS_GRPC)
 endif()
+
+# CTest resolves platform suffixes, configuration subdirectories and cross emulators.
+enable_testing()
+add_test(NAME consumer_execution COMMAND consumer)

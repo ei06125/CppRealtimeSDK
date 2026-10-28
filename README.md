@@ -253,3 +253,9 @@ block. The native Cortex-M4 reference verifies producer/consumer message integri
 Follow the [Google C++ style guide and formatting instructions](docs/style-guide.md).
 Run `python3 tools/format.py` before submitting source changes and
 `python3 tools/format.py --check` to verify formatting.
+
+## Cross-platform presets
+
+See [build presets and development environments](docs/build-presets.md) for
+macOS, Linux, Windows, FreeRTOS, Docker, and VS Code dev container instructions.
+Presets offer Debug, Development (`RelWithDebInfo`), and Release builds.
