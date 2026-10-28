@@ -1,0 +1,6 @@
+.git
+out
+build
+build-asan
+build-tsan
+bazel-*

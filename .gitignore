@@ -3,3 +3,4 @@ build-asan/
 build-tsan/
 bazel-*
 out/
+CMakeUserPresets.json

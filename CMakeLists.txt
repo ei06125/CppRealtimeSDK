@@ -2,9 +2,20 @@
 cmake_minimum_required(VERSION 3.16)
 project(rtsdk VERSION 0.1.0 LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+# Build configurations (selected by CMakePresets.json):
+#   Debug        -O0 -g, assertions on: stepping and sanitizer runs
+#   Development  = RelWithDebInfo, -O2 -g with assertions kept: realistic timing plus symbols
+#                  (daily work, CI perf budget). Stock RelWithDebInfo is used on purpose so
+#                  imported packages (gRPC, protobuf) resolve without a custom config.
+#   Release      -O3, NDEBUG: what ships to the ECU
+if(CMAKE_CONFIGURATION_TYPES)
+  set(CMAKE_CONFIGURATION_TYPES "Debug;RelWithDebInfo;Release" CACHE STRING "" FORCE)
+elseif(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "Debug, RelWithDebInfo (Development) or Release" FORCE)
+endif()
+if(NOT MSVC)
+  set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")  # unlike the default, keep assert() active
+endif()
 
 option(RTSDK_BUILD_TESTS     "Build unit tests"                         ON)
 option(RTSDK_BUILD_BENCH     "Build benchmarks"                         ON)
@@ -17,9 +28,16 @@ set(RTSDK_SANITIZE "" CACHE STRING "Sanitizers, e.g. address,undefined or thread
 
 # Shared warning/sanitizer flags, applied to every target via linkage.
 add_library(rtsdk_options INTERFACE)
-target_compile_options(rtsdk_options INTERFACE -Wall -Wextra -Wpedantic)
-if(RTSDK_WARNINGS_AS_ERRORS)
-  target_compile_options(rtsdk_options INTERFACE -Werror)
+if(MSVC)
+  target_compile_options(rtsdk_options INTERFACE /W4)
+  if(RTSDK_WARNINGS_AS_ERRORS)
+    target_compile_options(rtsdk_options INTERFACE /WX)
+  endif()
+else()
+  target_compile_options(rtsdk_options INTERFACE -Wall -Wextra -Wpedantic)
+  if(RTSDK_WARNINGS_AS_ERRORS)
+    target_compile_options(rtsdk_options INTERFACE -Werror)
+  endif()
 endif()
 if(RTSDK_SANITIZE)
   target_compile_options(rtsdk_options INTERFACE -fsanitize=${RTSDK_SANITIZE} -fno-omit-frame-pointer)

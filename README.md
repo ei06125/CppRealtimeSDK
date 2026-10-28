@@ -50,6 +50,9 @@ Platform-agnostic C++17 library that sits between ADAS applications and the OS
 sudo apt install cmake ninja-build libgrpc++-dev libprotobuf-dev protobuf-compiler-grpc
 cmake -S . -B out -G Ninja -DRTSDK_ENABLE_GRPC=ON && cmake --build out && ctest --test-dir out
 
+# CMake presets (CMakePresets.json; `cmake --list-presets` shows what applies to your host)
+cmake --preset linux-development && cmake --build --preset linux-development && ctest --preset linux-development
+
 # Dependency-free quick loop (g++ only): tests, ASan/UBSan, TSan, perf budget, FreeRTOS compile check
 make quality
 
@@ -82,3 +85,24 @@ quality (`-Wall -Wextra -Wpedantic -Werror`, ASan/UBSan, TSan).
   only contended by the supervisor, not between nodes.
 * Mailbox/SpscRing are single-writer / single-reader by contract.
 * The gRPC server uses insecure credentials; terminate mTLS in front for vehicles.
+
+## CMake presets and containers
+
+Configurations: **Debug** (`-O0 -g`), **Development** (`-O2 -g`, assertions kept; CMake type
+`RelWithDebInfo`) and **Release** (`-O3 -DNDEBUG`). Build trees go to `out/<preset>`.
+
+| Preset | Target | Status |
+|---|---|---|
+| `linux-{debug,development,release}` | Linux, POSIX backend | built and tested |
+| `linux-grpc` | Development + gRPC control plane | built and tested |
+| `linux-asan`, `linux-tsan` | Debug + sanitizers | built and tested |
+| `macos-{debug,development,release}` | macOS, POSIX backend | not run (no macOS here) |
+| `windows-{debug,development,release}` | core library only (no Windows backend yet) | not run |
+| `freertos-arm-{debug,development,release}` | Cortex-M cross build (`cmake/toolchains/arm-none-eabi.cmake`); pass `-DRTSDK_FREERTOS_INCLUDE_DIRS=...` | not run (no Arm compiler or kernel here) |
+
+Perf budgets (`rtsdk_perf`) are skipped in Debug and sanitizer presets because they are unoptimised.
+Yocto: use `inherit cmake` in the recipe, which supplies the toolchain and build type itself.
+
+`Dockerfile` and `.devcontainer/` give a reproducible Ubuntu 24.04 environment with all dependencies
+(`--cap-add=SYS_NICE --ulimit rtprio=99` enables SCHED_FIFO). They have not been built here because
+Docker Hub is blocked in this sandbox.

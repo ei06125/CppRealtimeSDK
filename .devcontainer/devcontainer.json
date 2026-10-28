@@ -1,0 +1,22 @@
+{
+  "name": "rtsdk",
+  "build": { "dockerfile": "../Dockerfile", "context": ".." },
+  // SCHED_FIFO needs CAP_SYS_NICE and an rtprio limit; ptrace is for gdb/sanitizers.
+  "runArgs": ["--cap-add=SYS_NICE", "--cap-add=SYS_PTRACE", "--ulimit", "rtprio=99"],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.cpptools",
+        "ms-vscode.cmake-tools",
+        "xaver.clang-format",
+        "zxh404.vscode-proto3"
+      ],
+      "settings": {
+        "cmake.useCMakePresets": "always",
+        "editor.defaultFormatter": "xaver.clang-format",
+        "editor.formatOnSave": true
+      }
+    }
+  },
+  "postCreateCommand": "cmake --preset linux-development"
+}

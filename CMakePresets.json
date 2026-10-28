@@ -1,0 +1,397 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 25,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out/${presetName}",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    },
+    {
+      "name": "debug",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "development",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    },
+    {
+      "name": "release",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "linux",
+      "hidden": true,
+      "inherits": "base",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
+      "name": "macos",
+      "hidden": true,
+      "inherits": "base",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      }
+    },
+    {
+      "name": "windows",
+      "hidden": true,
+      "generator": "Ninja Multi-Config",
+      "binaryDir": "${sourceDir}/out/${presetName}",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "cacheVariables": {
+        "RTSDK_WITH_POSIX": "OFF",
+        "RTSDK_BUILD_TESTS": "OFF",
+        "RTSDK_BUILD_BENCH": "OFF",
+        "RTSDK_BUILD_EXAMPLES": "OFF"
+      }
+    },
+    {
+      "name": "freertos-arm",
+      "hidden": true,
+      "inherits": "base",
+      "toolchainFile": "${sourceDir}/cmake/toolchains/arm-none-eabi.cmake",
+      "cacheVariables": {
+        "RTSDK_WITH_POSIX": "OFF",
+        "RTSDK_WITH_FREERTOS": "ON",
+        "RTSDK_BUILD_TESTS": "OFF",
+        "RTSDK_BUILD_BENCH": "OFF",
+        "RTSDK_BUILD_EXAMPLES": "OFF",
+        "RTSDK_ENABLE_GRPC": "OFF"
+      }
+    },
+    {
+      "name": "grpc",
+      "hidden": true,
+      "cacheVariables": {
+        "RTSDK_ENABLE_GRPC": "ON"
+      }
+    },
+    {
+      "name": "asan",
+      "hidden": true,
+      "cacheVariables": {
+        "RTSDK_SANITIZE": "address,undefined"
+      }
+    },
+    {
+      "name": "tsan",
+      "hidden": true,
+      "cacheVariables": {
+        "RTSDK_SANITIZE": "thread"
+      }
+    },
+    {
+      "name": "linux-debug",
+      "displayName": "linux-debug",
+      "description": "Linux Debug (POSIX backend)",
+      "inherits": [
+        "linux",
+        "debug"
+      ]
+    },
+    {
+      "name": "linux-development",
+      "displayName": "linux-development",
+      "description": "Linux Development (POSIX backend)",
+      "inherits": [
+        "linux",
+        "development"
+      ]
+    },
+    {
+      "name": "linux-release",
+      "displayName": "linux-release",
+      "description": "Linux Release (POSIX backend)",
+      "inherits": [
+        "linux",
+        "release"
+      ]
+    },
+    {
+      "name": "macos-debug",
+      "displayName": "macos-debug",
+      "description": "macOS Debug (POSIX backend)",
+      "inherits": [
+        "macos",
+        "debug"
+      ]
+    },
+    {
+      "name": "macos-development",
+      "displayName": "macos-development",
+      "description": "macOS Development (POSIX backend)",
+      "inherits": [
+        "macos",
+        "development"
+      ]
+    },
+    {
+      "name": "macos-release",
+      "displayName": "macos-release",
+      "description": "macOS Release (POSIX backend)",
+      "inherits": [
+        "macos",
+        "release"
+      ]
+    },
+    {
+      "name": "linux-grpc",
+      "displayName": "linux-grpc",
+      "description": "Linux Development with the gRPC control plane",
+      "inherits": [
+        "linux",
+        "development",
+        "grpc"
+      ]
+    },
+    {
+      "name": "linux-asan",
+      "displayName": "linux-asan",
+      "description": "Linux Debug + ASan/UBSan",
+      "inherits": [
+        "linux",
+        "debug",
+        "asan"
+      ]
+    },
+    {
+      "name": "linux-tsan",
+      "displayName": "linux-tsan",
+      "description": "Linux Debug + ThreadSanitizer",
+      "inherits": [
+        "linux",
+        "debug",
+        "tsan"
+      ]
+    },
+    {
+      "name": "windows-debug",
+      "displayName": "windows-debug",
+      "description": "Windows core library only (experimental), Debug",
+      "inherits": [
+        "windows"
+      ]
+    },
+    {
+      "name": "freertos-arm-debug",
+      "displayName": "freertos-arm-debug",
+      "description": "FreeRTOS on Arm Cortex-M cross build, Debug. Set RTSDK_FREERTOS_INCLUDE_DIRS",
+      "inherits": [
+        "freertos-arm",
+        "debug"
+      ]
+    },
+    {
+      "name": "windows-development",
+      "displayName": "windows-development",
+      "description": "Windows core library only (experimental), Development",
+      "inherits": [
+        "windows"
+      ]
+    },
+    {
+      "name": "freertos-arm-development",
+      "displayName": "freertos-arm-development",
+      "description": "FreeRTOS on Arm Cortex-M cross build, Development. Set RTSDK_FREERTOS_INCLUDE_DIRS",
+      "inherits": [
+        "freertos-arm",
+        "development"
+      ]
+    },
+    {
+      "name": "windows-release",
+      "displayName": "windows-release",
+      "description": "Windows core library only (experimental), Release",
+      "inherits": [
+        "windows"
+      ]
+    },
+    {
+      "name": "freertos-arm-release",
+      "displayName": "freertos-arm-release",
+      "description": "FreeRTOS on Arm Cortex-M cross build, Release. Set RTSDK_FREERTOS_INCLUDE_DIRS",
+      "inherits": [
+        "freertos-arm",
+        "release"
+      ]
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "linux-debug",
+      "configurePreset": "linux-debug"
+    },
+    {
+      "name": "linux-development",
+      "configurePreset": "linux-development"
+    },
+    {
+      "name": "linux-release",
+      "configurePreset": "linux-release"
+    },
+    {
+      "name": "macos-debug",
+      "configurePreset": "macos-debug"
+    },
+    {
+      "name": "macos-development",
+      "configurePreset": "macos-development"
+    },
+    {
+      "name": "macos-release",
+      "configurePreset": "macos-release"
+    },
+    {
+      "name": "linux-grpc",
+      "configurePreset": "linux-grpc"
+    },
+    {
+      "name": "linux-asan",
+      "configurePreset": "linux-asan"
+    },
+    {
+      "name": "linux-tsan",
+      "configurePreset": "linux-tsan"
+    },
+    {
+      "name": "windows-debug",
+      "configurePreset": "windows-debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "freertos-arm-debug",
+      "configurePreset": "freertos-arm-debug"
+    },
+    {
+      "name": "windows-development",
+      "configurePreset": "windows-development",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "freertos-arm-development",
+      "configurePreset": "freertos-arm-development"
+    },
+    {
+      "name": "windows-release",
+      "configurePreset": "windows-release",
+      "configuration": "Release"
+    },
+    {
+      "name": "freertos-arm-release",
+      "configurePreset": "freertos-arm-release"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "linux-debug",
+      "configurePreset": "linux-debug",
+      "output": {
+        "outputOnFailure": true
+      },
+      "filter": {
+        "exclude": {
+          "name": "rtsdk_perf"
+        }
+      }
+    },
+    {
+      "name": "linux-development",
+      "configurePreset": "linux-development",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "linux-release",
+      "configurePreset": "linux-release",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "macos-debug",
+      "configurePreset": "macos-debug",
+      "output": {
+        "outputOnFailure": true
+      },
+      "filter": {
+        "exclude": {
+          "name": "rtsdk_perf"
+        }
+      }
+    },
+    {
+      "name": "macos-development",
+      "configurePreset": "macos-development",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "macos-release",
+      "configurePreset": "macos-release",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "linux-grpc",
+      "configurePreset": "linux-grpc",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "linux-asan",
+      "configurePreset": "linux-asan",
+      "output": {
+        "outputOnFailure": true
+      },
+      "filter": {
+        "exclude": {
+          "name": "rtsdk_perf"
+        }
+      }
+    },
+    {
+      "name": "linux-tsan",
+      "configurePreset": "linux-tsan",
+      "output": {
+        "outputOnFailure": true
+      },
+      "filter": {
+        "exclude": {
+          "name": "rtsdk_perf"
+        }
+      }
+    }
+  ]
+}
