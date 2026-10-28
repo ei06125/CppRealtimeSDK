@@ -1,0 +1,3 @@
+# Keep C/C++ and Protocol Buffers formatting aligned with the Google style guide.
+# Use clang-format 18 for reproducible local and CI results.
+BasedOnStyle: Google

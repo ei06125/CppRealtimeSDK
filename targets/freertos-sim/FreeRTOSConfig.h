@@ -1,5 +1,6 @@
 // Kernel settings for hosted FreeRTOS behavior and failure-injection tests.
-// The simulator uses large test stacks and 64-bit ticks; its stack storage is not the pthread stack.
+// The simulator uses large test stacks and 64-bit ticks; its stack storage is
+// not the pthread stack.
 #pragma once
 #include <assert.h>
 #define configUSE_PREEMPTION 1

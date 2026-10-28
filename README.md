@@ -247,3 +247,9 @@ For bounded communication between nodes in the same process or RTOS image,
 use [rtx::Mailbox<Capacity>](docs/mailbox.md). It stores the latest byte payload
 inline and performs normal reads/writes without heap allocation; its mutex can
 block. The native Cortex-M4 reference verifies producer/consumer message integrity.
+
+## Code style
+
+Follow the [Google C++ style guide and formatting instructions](docs/style-guide.md).
+Run `python3 tools/format.py` before submitting source changes and
+`python3 tools/format.py --check` to verify formatting.

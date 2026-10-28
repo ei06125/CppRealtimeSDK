@@ -5,6 +5,14 @@ on: [push, pull_request, workflow_dispatch]
 permissions:
   contents: read
 jobs:
+  format:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install clang-format 18
+        run: sudo apt-get update && sudo apt-get install -y clang-format-18
+      - name: Check Google formatting
+        run: python3 tools/format.py --check
   build:
     runs-on: ubuntu-24.04
     strategy:

@@ -1,5 +1,6 @@
-// MPS2 reference kernel configuration, including active Release guards and resource measurements.
-// The C-runtime TLS block must match the board exception/newlib integration in every translation unit.
+// MPS2 reference kernel configuration, including active Release guards and
+// resource measurements. The C-runtime TLS block must match the board
+// exception/newlib integration in every translation unit.
 #pragma once
 #include <assert.h>
 #define configUSE_PREEMPTION 1
@@ -27,7 +28,10 @@ extern "C" void board_assert_failure();
 #else
 void board_assert_failure(void);
 #endif
-#define configASSERT(x) do {if(!(x)) board_assert_failure();} while(0)
+#define configASSERT(x)               \
+  do {                                \
+    if (!(x)) board_assert_failure(); \
+  } while (0)
 #define INCLUDE_vTaskDelay 1
 #define INCLUDE_vTaskDelete 1
 #define INCLUDE_uxTaskPriorityGet 1

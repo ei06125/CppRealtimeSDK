@@ -1,2 +1,6 @@
 # Keep local build trees, installed-consumer staging and generated protocol code out of source control.
 build*/
+
+# Python bytecode is regenerated locally.
+__pycache__/
+*.py[cod]
